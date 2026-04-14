@@ -239,7 +239,37 @@
   }
 </style>
 </head>
+<style>
+  .back-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 999;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #FFFFFF;
+    color: #FF6803;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px 8px 12px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    border: 1.5px solid #FF6803;
+    transition: background 0.15s, color 0.15s;
+  }
+  .back-btn:hover { background: #FF6803; color: #FFFFFF; }
+  .back-btn svg { flex-shrink: 0; }
+</style>
 <body>
+
+<a href="index.html" class="back-btn">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Back to Hub
+</a>
+
 <div class="page-wrapper">
 
   <!-- Header -->
