@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPS Analysis Report — UCOOK</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: #333333;
+    background: #F0F0F0;
+    line-height: 1.7;
+  }
+
+  /* Layout */
+  .page-wrapper { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* Header */
+  .report-header {
+    background: #FF6803;
+    border-radius: 18px;
+    padding: 48px 48px 40px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .report-header .logo { height: 28px; margin-bottom: 28px; filter: brightness(0) invert(1); }
+  .report-header .eyebrow {
+    font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+  }
+  .report-header h1 {
+    font-size: 2.4rem; font-weight: 700; color: #FFFFFF;
+    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .report-header .subtitle {
+    font-size: 16px; color: rgba(255,255,255,0.85); font-weight: 400; margin-bottom: 32px;
+  }
+  .header-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .header-stat {
+    background: rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 18px 20px;
+    backdrop-filter: blur(4px);
+  }
+  .header-stat .stat-value {
+    font-size: 2rem; font-weight: 900; color: #FFFFFF; line-height: 1;
+  }
+  .header-stat .stat-label {
+    font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;
+  }
+
+  /* Section cards */
+  .section-card {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 600; color: #FF6803;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 1.5rem; font-weight: 700; color: #1E1E1E;
+    margin-bottom: 6px; letter-spacing: -0.01em;
+  }
+  .section-subtitle {
+    font-size: 14px; color: #787878; margin-bottom: 28px;
+  }
+
+  /* NPS Trend bar */
+  .nps-trend { display: grid; grid-template-columns: repeat(13, 1fr); gap: 8px; margin-bottom: 12px; }
+  .nps-month { text-align: center; }
+  .nps-bar-wrap { height: 80px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
+  .nps-bar {
+    width: 28px; border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #FF6803, #E87543);
+    transition: all 0.2s;
+  }
+  .nps-score { font-size: 11px; font-weight: 700; color: #1E1E1E; margin-bottom: 2px; }
+  .nps-month-label { font-size: 10px; color: #787878; font-weight: 500; }
+
+  /* Pain point bars */
+  .pain-point-list { display: flex; flex-direction: column; gap: 14px; }
+  .pain-point-item { }
+  .pp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .pp-name { font-size: 14px; font-weight: 600; color: #1E1E1E; display: flex; align-items: center; gap: 8px; }
+  .pp-badge {
+    font-size: 11px; font-weight: 700; padding: 2px 10px;
+    border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .badge-dominant { background: #FFF0E8; color: #FF6803; }
+  .badge-rising { background: #FFF3CD; color: #B07A00; }
+  .badge-quickwin { background: #E8F8EA; color: #1B8A24; }
+  .pp-count { font-size: 14px; font-weight: 700; color: #525252; }
+  .pp-bar-track { height: 10px; background: #F0F0F0; border-radius: 5px; overflow: hidden; }
+  .pp-bar-fill { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+  .pp-quote {
+    font-size: 13px; color: #787878; font-style: italic;
+    margin-top: 6px; padding-left: 12px;
+    border-left: 3px solid #F0F0F0;
+    line-height: 1.5;
+  }
+
+  /* Colour coding for pain points */
+  .fill-primary { background: #FF6803; }
+  .fill-secondary { background: #FCD266; }
+  .fill-navy { background: #043B87; }
+  .fill-blue { background: #216BA5; }
+  .fill-green { background: #32BE3F; }
+  .fill-pink { background: #DF346D; }
+  .fill-mid { background: #787878; }
+  .fill-light { background: #CCCCCC; }
+
+  /* Quarterly trend table */
+  .trend-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .trend-table th {
+    background: #F0F0F0; color: #525252; font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 10px 14px; text-align: left;
+    border-radius: 0;
+  }
+  .trend-table th:first-child { border-radius: 10px 0 0 10px; }
+  .trend-table th:last-child { border-radius: 0 10px 10px 0; }
+  .trend-table td { padding: 12px 14px; border-bottom: 1px solid #F0F0F0; color: #333333; vertical-align: top; }
+  .trend-table tr:last-child td { border-bottom: none; }
+  .trend-table tr:hover td { background: #FAFAFA; }
+  .trend-pill {
+    display: inline-block;
+    background: #F0F0F0; color: #525252;
+    border-radius: 50px; padding: 3px 12px;
+    font-size: 12px; font-weight: 500; margin: 2px;
+    white-space: nowrap;
+  }
+  .trend-pill.orange { background: #FFF0E8; color: #FF6803; font-weight: 600; }
+  .trend-pill.navy { background: #EEF2FA; color: #043B87; font-weight: 600; }
+  .trend-pill.gold { background: #FFF8E1; color: #B07A00; font-weight: 600; }
+
+  /* Quick wins */
+  .quickwins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .qw-card {
+    border: 2px solid #F0F0F0;
+    border-radius: 14px; padding: 22px 24px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .qw-card:hover { border-color: #FF6803; box-shadow: 0 4px 16px rgba(255,104,3,0.1); }
+  .qw-icon { font-size: 24px; margin-bottom: 10px; }
+  .qw-title { font-size: 15px; font-weight: 700; color: #1E1E1E; margin-bottom: 6px; }
+  .qw-desc { font-size: 13px; color: #525252; line-height: 1.6; }
+  .qw-effort {
+    display: inline-block; margin-top: 10px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .effort-low { background: #E8F8EA; color: #1B8A24; }
+  .effort-mid { background: #FFF8E1; color: #B07A00; }
+
+  /* Comments section */
+  .comments-grid { display: flex; flex-direction: column; gap: 12px; }
+  .comment-card {
+    border-left: 4px solid #CCCCCC;
+    padding: 14px 18px;
+    background: #FAFAFA;
+    border-radius: 0 10px 10px 0;
+  }
+  .comment-card.severity-high { border-left-color: #F20C1A; }
+  .comment-card.severity-med { border-left-color: #FCD266; }
+  .comment-card.severity-low { border-left-color: #32BE3F; }
+  .comment-meta { display: flex; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .meta-tag {
+    font-size: 11px; font-weight: 600; padding: 2px 8px;
+    border-radius: 50px; background: #F0F0F0; color: #525252;
+  }
+  .meta-tag.date { background: #F0F0F0; color: #787878; }
+  .meta-tag.pain { background: #FFF0E8; color: #FF6803; }
+  .meta-tag.score-low { background: #FDECEA; color: #C0392B; }
+  .comment-text { font-size: 13px; color: #333333; line-height: 1.6; font-style: italic; }
+
+  /* 2-col layout */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* Summary box */
+  .summary-box {
+    background: linear-gradient(135deg, #043B87 0%, #1D5D90 100%);
+    border-radius: 18px; padding: 36px 40px;
+    margin-bottom: 24px;
+    color: #FFFFFF;
+  }
+  .summary-box h2 { color: #FFFFFF; font-size: 1.5rem; margin-bottom: 16px; }
+  .summary-point { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .summary-dot { width: 8px; height: 8px; border-radius: 50%; background: #FF6803; flex-shrink: 0; margin-top: 9px; }
+  .summary-point p { font-size: 14px; color: rgba(255,255,255,0.88); line-height: 1.6; }
+  .summary-point strong { color: #FFFFFF; }
+
+  /* NPS segment bar */
+  .segment-bar { display: flex; border-radius: 10px; overflow: hidden; height: 32px; margin: 16px 0 8px; }
+  .seg { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #FFFFFF; }
+  .seg-detractor { background: #F20C1A; }
+  .seg-passive { background: #FCD266; color: #1E1E1E; }
+  .seg-promoter { background: #32BE3F; }
+  .seg-labels { display: flex; justify-content: space-between; font-size: 12px; color: #787878; }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid #F0F0F0; margin: 24px 0; }
+
+  /* Print styles */
+  @media print {
+    body { background: #FFFFFF; }
+    .page-wrapper { padding: 0; max-width: 100%; }
+    .section-card { box-shadow: none; border: 1px solid #F0F0F0; break-inside: avoid; }
+  }
+
+  @media (max-width: 768px) {
+    .header-stats { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .quickwins-grid { grid-template-columns: 1fr; }
+    .nps-trend { grid-template-columns: repeat(6, 1fr); }
+    .report-header { padding: 32px 24px; }
+    .section-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="report-header">
+    <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" class="logo">
+    <div class="eyebrow">Customer Insights · NPS Analysis</div>
+    <h1>NPS Detractor Analysis Report</h1>
+    <p class="subtitle">April 2025 – April 2026 &nbsp;·&nbsp; Pain point tagging, trend analysis &amp; quick wins</p>
+    <div class="header-stats">
+      <div class="header-stat">
+        <div class="stat-value">74</div>
+        <div class="stat-label">Avg. NPS Score</div>
+      </div>
+      <div class="header-stat">
+        <div class="stat-value">2,907</div>
+        <div class="stat-label">Total Responses</div>
+      </div>
+      <div class="header-stat">
+        <div class="stat-value">91</div>
+        <div class="stat-label">Detractors</div>
+      </div>
+      <div class="header-stat">
+        <div class="stat-value">78</div>
+        <div class="stat-label">Qualitative Comments</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Executive Summary -->
+  <div class="summary-box">
+    <h2>Executive Summary</h2>
+    <div class="summary-point">
+      <div class="summary-dot"></div>
+      <p><strong>Pricing &amp; Value</strong> is the single most dominant pain point, cited in 24% of all qualitative detractor comments — consistent across every quarter and showing no sign of abating. This is a structural concern, not a service recovery issue.</p>
+    </div>
+    <div class="summary-point">
+      <div class="summary-dot"></div>
+      <p><strong>Ingredient Quality and Customer Service</strong> are both tied as the second-largest pain clusters. Ingredient quality complaints are intensifying in early 2026 (fresh produce deteriorating by day 3). Customer service failures range from unanswered emails to unauthorised billing.</p>
+    </div>
+    <div class="summary-point">
+      <div class="summary-dot"></div>
+      <p><strong>Portion Size</strong> is a newly increasing pain point — barely present in 2025, it has risen sharply in Q1 2026, with multiple customers noting that single-serve portions have decreased since they joined.</p>
+    </div>
+    <div class="summary-point">
+      <div class="summary-dot"></div>
+      <p><strong>Six quick wins</strong> were identified that require relatively low effort — including delivery tracking, recipe card QA, promo code fixes, and meal labelling improvements. These can drive immediate satisfaction recovery among at-risk customers.</p>
+    </div>
+  </div>
+
+  <!-- NPS Score Trend -->
+  <div class="section-card">
+    <div class="section-eyebrow">Monthly Trend</div>
+    <div class="section-title">NPS Score by Month</div>
+    <div class="section-subtitle">Calculated NPS = % Promoters − % Detractors &nbsp;·&nbsp; Based on 2,907 scored responses</div>
+
+    <div class="nps-trend">
+      <!-- Apr 25: 72 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:60%"></div></div>
+        <div class="nps-score">72</div>
+        <div class="nps-month-label">Apr '25</div>
+      </div>
+      <!-- May 25: 74 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:63%"></div></div>
+        <div class="nps-score">74</div>
+        <div class="nps-month-label">May '25</div>
+      </div>
+      <!-- Jun 25: 79 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:72%"></div></div>
+        <div class="nps-score">79</div>
+        <div class="nps-month-label">Jun '25</div>
+      </div>
+      <!-- Jul 25: 74 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:63%"></div></div>
+        <div class="nps-score">74</div>
+        <div class="nps-month-label">Jul '25</div>
+      </div>
+      <!-- Aug 25: 70 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:55%"></div></div>
+        <div class="nps-score">70</div>
+        <div class="nps-month-label">Aug '25</div>
+      </div>
+      <!-- Sep 25: 76 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:65%"></div></div>
+        <div class="nps-score">76</div>
+        <div class="nps-month-label">Sep '25</div>
+      </div>
+      <!-- Oct 25: 70 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:55%"></div></div>
+        <div class="nps-score">70</div>
+        <div class="nps-month-label">Oct '25</div>
+      </div>
+      <!-- Nov 25: 80 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:74%"></div></div>
+        <div class="nps-score">80</div>
+        <div class="nps-month-label">Nov '25</div>
+      </div>
+      <!-- Dec 25: 72 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:60%"></div></div>
+        <div class="nps-score">72</div>
+        <div class="nps-month-label">Dec '25</div>
+      </div>
+      <!-- Jan 26: 81 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:76%"></div></div>
+        <div class="nps-score">81</div>
+        <div class="nps-month-label">Jan '26</div>
+      </div>
+      <!-- Feb 26: 71 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:57%"></div></div>
+        <div class="nps-score">71</div>
+        <div class="nps-month-label">Feb '26</div>
+      </div>
+      <!-- Mar 26: 78 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:70%"></div></div>
+        <div class="nps-score">78</div>
+        <div class="nps-month-label">Mar '26</div>
+      </div>
+      <!-- Apr 26: 79 -->
+      <div class="nps-month">
+        <div class="nps-bar-wrap"><div class="nps-bar" style="height:72%"></div></div>
+        <div class="nps-score">79</div>
+        <div class="nps-month-label">Apr '26</div>
+      </div>
+    </div>
+
+    <div class="segment-bar">
+      <div class="seg seg-detractor" style="width:3.1%">3.1%</div>
+      <div class="seg seg-passive" style="width:19%">19%</div>
+      <div class="seg seg-promoter" style="width:77.8%">77.8%</div>
+    </div>
+    <div class="seg-labels">
+      <span>Detractors (0–6)</span>
+      <span>Passives (7–8)</span>
+      <span>Promoters (9–10)</span>
+    </div>
+
+    <p style="font-size:13px; color:#787878; margin-top:16px;">
+      ⚡ <strong>Feb 2026</strong> saw the lowest monthly NPS at <strong>71</strong>, coinciding with the highest detractor comment volume (10 comments) — driven by a spike in Delivery failures and Customer Service issues. <strong>Jan 2026</strong> recorded the peak at 81, driven by a low detractor count despite higher overall response volume.
+    </p>
+  </div>
+
+  <!-- Pain Point Analysis -->
+  <div class="section-card">
+    <div class="section-eyebrow">Qualitative Analysis · 78 Comments</div>
+    <div class="section-title">Pain Point Frequency</div>
+    <div class="section-subtitle">Tagged from all detractor text comments. A single comment may carry multiple tags.</div>
+
+    <div class="pain-point-list">
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">
+            Pricing &amp; Value
+            <span class="pp-badge badge-dominant">Dominant</span>
+          </div>
+          <div class="pp-count">19 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-primary" style="width:100%"></div></div>
+        <div class="pp-quote">"Price — the kits and the meals have been consistently great but it's just too expensive." &nbsp;·&nbsp; "It is too pricey per meal for a college student."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Food Quality
+            <span class="pp-badge badge-dominant">Dominant</span>
+          </div>
+          <div class="pp-count">13 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-secondary" style="width:68%"></div></div>
+        <div class="pp-quote">"It feels as if the quality went down… buns fell apart. Been asked by the family to reconsider Ucook. It used to be much better." &nbsp;·&nbsp; "Not consistently exceptional."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Customer Service
+            <span class="pp-badge badge-rising">Rising</span>
+          </div>
+          <div class="pp-count">12 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-navy" style="width:63%"></div></div>
+        <div class="pp-quote">"Shocking customer service. No one picked up calls or answered my emails to date. Comment ignored on social media too." &nbsp;·&nbsp; "I never ordered a second lot of food which they have taken payment for."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Ingredient Quality
+            <span class="pp-badge badge-rising">Rising</span>
+          </div>
+          <div class="pp-count">12 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-blue" style="width:63%"></div></div>
+        <div class="pp-quote">"I often end up replacing the veggies from the meal kits with fresher ones from my own fridge… the same problem keeps happening week after week." &nbsp;·&nbsp; "Greens showing signs of distress — exacerbated when for a meal 3 days from now."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Delivery
+            <span class="pp-badge badge-rising">Rising</span>
+          </div>
+          <div class="pp-count">11 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-pink" style="width:58%"></div></div>
+        <div class="pp-quote">"The delivery window is too wide. 0900–1800 is ridiculous." &nbsp;·&nbsp; "Communication once ordered is erratic." &nbsp;·&nbsp; "Had terrible experience — don't deliver food a day late as it's not fresh anymore."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Portion Size
+            <span class="pp-badge badge-rising">Rising</span>
+          </div>
+          <div class="pp-count">8 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-mid" style="width:42%"></div></div>
+        <div class="pp-quote">"Portion sizes for 1 person are much too small. They have decreased since I joined UCOOK." &nbsp;·&nbsp; "The portions are too small relative to the price."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Platform &amp; UX</div>
+          <div class="pp-count">8 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-light" style="width:42%"></div></div>
+        <div class="pp-quote">"Forced to take a plan — there is no casual option." &nbsp;·&nbsp; "No visibility of what options are available in your area at time of choosing a meal."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Recipe Complexity</div>
+          <div class="pp-count">5 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-light" style="width:26%"></div></div>
+        <div class="pp-quote">"Meal prep takes a lot longer than stated on the menu." &nbsp;·&nbsp; "Meals still feel like quite a lot of work for not such an exceptional outcome."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Product Range</div>
+          <div class="pp-count">5 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-light" style="width:26%"></div></div>
+        <div class="pp-quote">"Too little frozen options available." &nbsp;·&nbsp; "There is no frozen meal option in KZN."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Menu Variety</div>
+          <div class="pp-count">4 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-light" style="width:21%"></div></div>
+        <div class="pp-quote">"Expensive and recently not very imaginative." &nbsp;·&nbsp; "Find you use the same flavours over and over — try mix it up."</div>
+      </div>
+
+      <div class="pain-point-item">
+        <div class="pp-header">
+          <div class="pp-name">Recipe Accuracy
+            <span class="pp-badge badge-quickwin">Quick Win</span>
+          </div>
+          <div class="pp-count">4 mentions</div>
+        </div>
+        <div class="pp-bar-track"><div class="pp-bar-fill fill-green" style="width:21%"></div></div>
+        <div class="pp-quote">"Frequent errors in recipe cards." &nbsp;·&nbsp; "Carb Conscious meals are very high in carbs — more than 35g per serving — way too high for Keto/Banting."</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quarterly Trend -->
+  <div class="section-card">
+    <div class="section-eyebrow">Trend Analysis</div>
+    <div class="section-title">Pain Points by Quarter</div>
+    <div class="section-subtitle">Top 5 pain points per quarter from tagged detractor comments — highlights what's dominant, what's rising, and what's receding.</div>
+
+    <table class="trend-table">
+      <thead>
+        <tr>
+          <th>Quarter</th>
+          <th>Top Pain Points</th>
+          <th>Detractor Comments</th>
+          <th>Signal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Q2 2025</strong><br><span style="font-size:12px;color:#787878">Apr – Jun</span></td>
+          <td>
+            <span class="trend-pill orange">Food Quality ×4</span>
+            <span class="trend-pill orange">Pricing ×4</span>
+            <span class="trend-pill">Ingredient Quality ×4</span>
+            <span class="trend-pill">Recipe Complexity ×3</span>
+            <span class="trend-pill">Menu Variety ×2</span>
+          </td>
+          <td style="font-weight:700;color:#FF6803">15</td>
+          <td style="font-size:13px;color:#525252">Early-stage signal — food quality and pricing emerge together. Recipe complexity noted by multiple customers.</td>
+        </tr>
+        <tr>
+          <td><strong>Q3 2025</strong><br><span style="font-size:12px;color:#787878">Jul – Sep</span></td>
+          <td>
+            <span class="trend-pill navy">Customer Service ×5</span>
+            <span class="trend-pill">Food Quality ×4</span>
+            <span class="trend-pill orange">Pricing ×4</span>
+            <span class="trend-pill">Ingredient Quality ×3</span>
+            <span class="trend-pill">Portion Size ×3</span>
+          </td>
+          <td style="font-weight:700;color:#FF6803">21</td>
+          <td style="font-size:13px;color:#525252"><strong style="color:#043B87">Customer Service spikes</strong> — highest single-quarter count. Portion size appears for the first time.</td>
+        </tr>
+        <tr>
+          <td><strong>Q4 2025</strong><br><span style="font-size:12px;color:#787878">Oct – Dec</span></td>
+          <td>
+            <span class="trend-pill orange">Pricing ×7</span>
+            <span class="trend-pill">Food Quality ×3</span>
+            <span class="trend-pill">Delivery ×3</span>
+            <span class="trend-pill">Customer Service ×2</span>
+            <span class="trend-pill">Portion Size ×2</span>
+          </td>
+          <td style="font-weight:700;color:#FF6803">17</td>
+          <td style="font-size:13px;color:#525252"><strong style="color:#FF6803">Pricing dominates</strong> — 7 of 17 comments cite cost. Holiday season amplifies value-for-money frustration.</td>
+        </tr>
+        <tr>
+          <td><strong>Q1 2026</strong><br><span style="font-size:12px;color:#787878">Jan – Mar</span></td>
+          <td>
+            <span class="trend-pill gold">Delivery ×4</span>
+            <span class="trend-pill gold">Portion Size ×3</span>
+            <span class="trend-pill">Pricing ×3</span>
+            <span class="trend-pill">Food Quality ×2</span>
+            <span class="trend-pill">Recipe Accuracy ×2</span>
+          </td>
+          <td style="font-weight:700;color:#FF6803">20</td>
+          <td style="font-size:13px;color:#525252"><strong style="color:#B07A00">Delivery and Portion Size rising</strong> — Feb 2026 is worst month for delivery failures. Portion size complaints intensify.</td>
+        </tr>
+        <tr>
+          <td><strong>Apr 2026</strong><br><span style="font-size:12px;color:#787878">Partial month</span></td>
+          <td>
+            <span class="trend-pill">Ingredient Quality ×2</span>
+            <span class="trend-pill">Platform &amp; UX ×2</span>
+            <span class="trend-pill">Pricing ×1</span>
+            <span class="trend-pill">Customer Service ×1</span>
+          </td>
+          <td style="font-weight:700;color:#FF6803">5</td>
+          <td style="font-size:13px;color:#525252">Ingredient freshness and platform usability emerging early in April. Unauthorised charge complaint is high severity.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Dominant / Rising / Quick Wins legend -->
+  <div class="two-col">
+
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-eyebrow">Long-running Issues</div>
+      <div class="section-title" style="font-size:1.2rem">Dominant Pain Points</div>
+      <p style="font-size:14px;color:#525252;margin-bottom:20px">These pain points appear in every quarter and represent structural challenges requiring strategic intervention.</p>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1E1E1E;margin-bottom:4px">💸 Pricing &amp; Value</div>
+          <p style="font-size:13px;color:#525252">Present in every quarter. Customers consistently acknowledge product quality but rate UCOOK as too expensive — particularly single-person orders, students, and pensioners. Pricing sensitivity has not eased despite a strong NPS overall.</p>
+        </div>
+        <hr>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1E1E1E;margin-bottom:4px">🍽️ Food Quality</div>
+          <p style="font-size:13px;color:#525252">Inconsistency is the core complaint — customers don't say food is "always bad," they say it's "sometimes great, sometimes not." Flavour variation and meat quality are recurring sub-themes. The perception that "it used to be better" signals a quality regression concern.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-eyebrow">Newly Escalating</div>
+      <div class="section-title" style="font-size:1.2rem">Rising Pain Points</div>
+      <p style="font-size:14px;color:#525252;margin-bottom:20px">These are gaining momentum — volume or severity has increased noticeably in Q4 2025 and Q1 2026.</p>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1E1E1E;margin-bottom:4px">📏 Portion Size <span style="background:#FFF8E1;color:#B07A00;font-size:11px;font-weight:600;padding:2px 8px;border-radius:50px;margin-left:6px">↑ New in Q3, accelerating in Q1 '26</span></div>
+          <p style="font-size:13px;color:#525252">Multiple customers note that single-serve portions have visibly decreased. "Decreased since I joined UCOOK" suggests a deliberate reduction that customers have noticed and remember.</p>
+        </div>
+        <hr>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1E1E1E;margin-bottom:4px">🚚 Delivery <span style="background:#FFF8E1;color:#B07A00;font-size:11px;font-weight:600;padding:2px 8px;border-radius:50px;margin-left:6px">↑ Peaked Feb '26</span></div>
+          <p style="font-size:13px;color:#525252">Delivery complaints shifted from occasional non-delivery to a pattern of wide windows, no tracking, and late food. Feb 2026 had 4 delivery-related comments in a single month — the highest ever. A specific request for narrower windows and SMS notifications appears repeatedly.</p>
+        </div>
+        <hr>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1E1E1E;margin-bottom:4px">🎧 Customer Service <span style="background:#FFF8E1;color:#B07A00;font-size:11px;font-weight:600;padding:2px 8px;border-radius:50px;margin-left:6px">↑ Severity escalating</span></div>
+          <p style="font-size:13px;color:#525252">CS complaints are among the most emotionally charged. Multiple customers report being charged incorrectly, ignored across all channels (phone, email, social media), or receiving promises that were not followed through. Several cases risk public escalation via HelloPeter.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <br>
+
+  <!-- Quick Wins -->
+  <div class="section-card">
+    <div class="section-eyebrow">Immediate Opportunities</div>
+    <div class="section-title">Quick Wins</div>
+    <div class="section-subtitle">Specific, addressable issues identified directly from customer language — low implementation effort, high retention impact.</div>
+
+    <div class="quickwins-grid">
+
+      <div class="qw-card">
+        <div class="qw-icon">📍</div>
+        <div class="qw-title">Delivery Tracking &amp; Narrower Windows</div>
+        <div class="qw-desc">Multiple customers specifically requested SMS/text notifications for delivery. The current 09:00–18:00 window was called out by name as "ridiculous." A 3-hour window with a morning ETA SMS would resolve several detractor comments immediately.</div>
+        <div class="qw-effort effort-mid">Medium effort</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-icon">📋</div>
+        <div class="qw-title">Recipe Card QA Process</div>
+        <div class="qw-desc">Recipe card errors — wrong cook times, inaccurate instructions, incorrect nutritional labelling — are mentioned by multiple loyal customers. A simple peer-review step before print would close this gap. The Carb Conscious range's carb count labelling was called out as dangerously inaccurate for Keto/Banting customers.</div>
+        <div class="qw-effort effort-low">Low effort</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-icon">🎟️</div>
+        <div class="qw-title">Voucher &amp; Promo Code Reliability</div>
+        <div class="qw-desc">At least 3 comments describe a voucher being accepted at basket stage then rejected at payment — with no response from support. This is a trust-breaker. A real-time eligibility check at entry point and a clear decline reason would prevent these complaints.</div>
+        <div class="qw-effort effort-low">Low effort</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-icon">🏷️</div>
+        <div class="qw-title">Meal Expiry &amp; Freeze Labelling</div>
+        <div class="qw-desc">Customers asked for per-meal use-by dates (not just "eat within 3 days") and clear freeze-by / freeze instructions. This is a packaging change flagged by multiple customers including new users. Particularly important for customers ordering 4-meal kits where meals are consumed across different days.</div>
+        <div class="qw-effort effort-low">Low effort</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-icon">🧊</div>
+        <div class="qw-title">Frozen Meal Availability in KZN</div>
+        <div class="qw-desc">KZN customers specifically call out the absence of frozen options and higher delivery fees as reasons to detract. This is a regional gap that disproportionately affects loyalty in Durban. Even a limited frozen range or delivery cost parity signal would reduce this friction.</div>
+        <div class="qw-effort effort-mid">Medium effort</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-icon">⚖️</div>
+        <div class="qw-title">Portion Size Transparency</div>
+        <div class="qw-desc">If portion sizes have been reduced, customers need to know. A clear communication of gram weights on the product page would set expectations. Several customers felt deceived — not just disappointed. Even adding protein weight to the meal description card would reduce this complaint.</div>
+        <div class="qw-effort effort-low">Low effort</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Notable Comments -->
+  <div class="section-card">
+    <div class="section-eyebrow">Voice of the Customer</div>
+    <div class="section-title">High-Signal Comments</div>
+    <div class="section-subtitle">Selected verbatim quotes that best illustrate each pain cluster. Severity: <span style="color:#F20C1A;font-weight:600">High</span> = churn risk · <span style="color:#B07A00;font-weight:600">Medium</span> = at-risk · <span style="color:#1B8A24;font-weight:600">Low</span> = salvageable</div>
+
+    <div class="comments-grid">
+
+      <div class="comment-card severity-high">
+        <div class="comment-meta">
+          <span class="meta-tag date">Feb 2026</span>
+          <span class="meta-tag pain">Customer Service</span>
+          <span class="meta-tag score-low">Score: 0</span>
+        </div>
+        <div class="comment-text">"Shocking customer service. No one picked up calls or answered my emails to date. Comment ignored on social media too."</div>
+      </div>
+
+      <div class="comment-card severity-high">
+        <div class="comment-meta">
+          <span class="meta-tag date">Apr 2026</span>
+          <span class="meta-tag pain">Customer Service · Billing</span>
+          <span class="meta-tag score-low">Score: 0</span>
+        </div>
+        <div class="comment-text">"I never ordered a second lot of food which they have taken payment for. None of the 3 dishes would I have ever ordered. So very angry to be paying for something I never ordered."</div>
+      </div>
+
+      <div class="comment-card severity-high">
+        <div class="comment-meta">
+          <span class="meta-tag date">Jul 2025</span>
+          <span class="meta-tag pain">Delivery · Customer Service</span>
+          <span class="meta-tag score-low">Score: 0</span>
+        </div>
+        <div class="comment-text">"Had terrible experience — don't deliver food a day late as it's not as fresh anymore. When I reported it, the consultant said I will be credited. This also did not happen."</div>
+      </div>
+
+      <div class="comment-card severity-high">
+        <div class="comment-meta">
+          <span class="meta-tag date">Sep 2025</span>
+          <span class="meta-tag pain">Food Safety</span>
+          <span class="meta-tag score-low">Score: 3</span>
+        </div>
+        <div class="comment-text">"One meal gave me food poisoning."</div>
+      </div>
+
+      <div class="comment-card severity-med">
+        <div class="comment-meta">
+          <span class="meta-tag date">Jan 2026</span>
+          <span class="meta-tag pain">Portion Size</span>
+          <span class="meta-tag">Score: 5</span>
+        </div>
+        <div class="comment-text">"Portion sizes for 1 person are much too small. They have decreased since I joined UCOOK. There's not enough value for money when ordering for one person anymore."</div>
+      </div>
+
+      <div class="comment-card severity-med">
+        <div class="comment-meta">
+          <span class="meta-tag date">Jun 2025</span>
+          <span class="meta-tag pain">Ingredient Quality</span>
+          <span class="meta-tag">Score: 3</span>
+        </div>
+        <div class="comment-text">"The quality of the vegetables lately has been disappointing. I often end up replacing the veggies from the meal kits with fresher ones from my own fridge. Customer support always responds by assuring me the issue will be resolved, but the same problem keeps happening week after week."</div>
+      </div>
+
+      <div class="comment-card severity-med">
+        <div class="comment-meta">
+          <span class="meta-tag date">Feb 2026</span>
+          <span class="meta-tag pain">Platform &amp; UX · Regional</span>
+          <span class="meta-tag">Score: 4</span>
+        </div>
+        <div class="comment-text">"You are forced to take a plan — there is no casual option. There is no visibility of what options are available in your area at time of choosing a meal. You only find out much later when you try to checkout that the option is not available. Very frustrating. There is no frozen meal option in KZN."</div>
+      </div>
+
+      <div class="comment-card severity-low">
+        <div class="comment-meta">
+          <span class="meta-tag date">Oct 2025</span>
+          <span class="meta-tag pain">Pricing &amp; Value</span>
+          <span class="meta-tag">Score: 5</span>
+        </div>
+        <div class="comment-text">"Price — the kits and the meals have been consistently great but it's just too expensive." <em>(This customer acknowledges the product is excellent — pure price sensitivity.)</em></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:32px 0 0;color:#CCCCCC;font-size:12px;">
+    UCOOK NPS Analysis Report &nbsp;·&nbsp; Data period: April 2025 – April 2026 &nbsp;·&nbsp; Generated April 2026
+  </div>
+
+</div>
+</body>
+</html>

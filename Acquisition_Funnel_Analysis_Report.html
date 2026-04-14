@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acquisition Funnel Analysis — UCOOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #333333;
+      line-height: 1.7;
+      background: #F0F0F0;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: #FFFFFF;
+      border-bottom: 1px solid #F0F0F0;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .header img { height: 29px; }
+    .header-meta { font-size: 13px; color: #787878; font-weight: 500; }
+    .header-meta span { color: #FF6803; font-weight: 700; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #FF6803 0%, #E87543 100%);
+      color: #FFFFFF;
+      padding: 64px 40px 48px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      font-size: 18px;
+      color: rgba(255,255,255,0.88);
+      max-width: 680px;
+      line-height: 1.7;
+    }
+    .hero-period {
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ── SECTION ── */
+    section {
+      padding: 52px 0;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #FF6803;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1E1E1E;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: #525252;
+      max-width: 720px;
+      margin-bottom: 36px;
+    }
+
+    /* ── KPI GRID ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .kpi-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .kpi-card .label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #787878;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+    }
+    .kpi-card .value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #1E1E1E;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .kpi-card .sub {
+      font-size: 13px;
+      color: #787878;
+    }
+    .kpi-card.orange { border-top: 4px solid #FF6803; }
+    .kpi-card.orange .value { color: #FF6803; }
+    .kpi-card.navy { border-top: 4px solid #043B87; }
+    .kpi-card.navy .value { color: #043B87; }
+    .kpi-card.red { border-top: 4px solid #F20C1A; }
+    .kpi-card.red .value { color: #F20C1A; }
+    .kpi-card.green { border-top: 4px solid #32BE3F; }
+    .kpi-card.green .value { color: #32BE3F; }
+
+    /* ── FUNNEL VISUAL ── */
+    .funnel-section {
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 36px 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      margin-bottom: 24px;
+    }
+    .funnel-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1E1E1E;
+      margin-bottom: 4px;
+    }
+    .funnel-section .funnel-period {
+      font-size: 13px;
+      color: #787878;
+      margin-bottom: 28px;
+    }
+    .funnel-steps {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+    }
+    .funnel-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .funnel-bar-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+      height: 220px;
+      align-items: flex-end;
+    }
+    .funnel-bar {
+      width: 72%;
+      border-radius: 10px 10px 0 0;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .funnel-bar:hover { opacity: 0.9; }
+    .funnel-bar-label {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #1E1E1E;
+    }
+    .funnel-step-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333333;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .funnel-step-users {
+      font-size: 13px;
+      color: #787878;
+    }
+    .funnel-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      padding-bottom: 48px;
+      flex-shrink: 0;
+      width: 60px;
+    }
+    .funnel-arrow-pct {
+      font-size: 12px;
+      font-weight: 700;
+      color: #525252;
+      background: #F0F0F0;
+      border-radius: 50px;
+      padding: 3px 10px;
+      margin-bottom: 4px;
+    }
+    .funnel-arrow-pct.danger { background: #FDECEA; color: #F20C1A; }
+    .funnel-arrow-pct.warn { background: #FEF6E4; color: #E07A00; }
+    .funnel-arrow-pct.ok { background: #E6F9E8; color: #28A534; }
+    .funnel-arrow svg { color: #CCCCCC; }
+
+    /* ── TWO-COL LAYOUT ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    /* ── FLAGS & WINS CARDS ── */
+    .flag-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-left: 5px solid #F20C1A;
+      margin-bottom: 16px;
+    }
+    .flag-card.warn { border-left-color: #FCD266; }
+    .flag-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1E1E1E;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .flag-card h4 .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-red { background: #FDECEA; color: #F20C1A; }
+    .badge-warn { background: #FEF6E4; color: #E07A00; }
+    .badge-navy { background: #E8EEF8; color: #043B87; }
+    .flag-card p {
+      font-size: 14px;
+      color: #525252;
+      line-height: 1.65;
+    }
+    .flag-card .metric {
+      display: inline-block;
+      background: #F0F0F0;
+      border-radius: 8px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1E1E1E;
+      margin: 8px 4px 0 0;
+    }
+    .flag-card .metric.red { background: #FDECEA; color: #F20C1A; }
+    .flag-card .metric.green { background: #E6F9E8; color: #28A534; }
+    .flag-card .metric.orange { background: #FFF0E6; color: #FF6803; }
+
+    .win-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-left: 5px solid #32BE3F;
+      margin-bottom: 16px;
+    }
+    .win-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1E1E1E;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .win-card p {
+      font-size: 14px;
+      color: #525252;
+      line-height: 1.65;
+    }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .table-wrap h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1E1E1E;
+      margin-bottom: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #787878;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      border-bottom: 2px solid #F0F0F0;
+    }
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #F0F0F0;
+      color: #333333;
+      font-weight: 400;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #FAFAFA; }
+    td.highlight { font-weight: 700; color: #FF6803; }
+    td.danger { font-weight: 700; color: #F20C1A; }
+    td.success { font-weight: 700; color: #32BE3F; }
+    td.navy { font-weight: 700; color: #043B87; }
+    td.strong { font-weight: 600; }
+
+    /* ── PILL TAGS ── */
+    .pill {
+      display: inline-block;
+      border-radius: 50px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pill-orange { background: #FFF0E6; color: #FF6803; }
+    .pill-red { background: #FDECEA; color: #F20C1A; }
+    .pill-green { background: #E6F9E8; color: #28A534; }
+    .pill-navy { background: #E8EEF8; color: #043B87; }
+    .pill-gold { background: #FEF6D9; color: #9A6E00; }
+
+    /* ── PROGRESS BAR ── */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .bar-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333333;
+      min-width: 100px;
+    }
+    .bar-track {
+      flex: 1;
+      height: 10px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+    .bar-pct {
+      font-size: 13px;
+      font-weight: 700;
+      color: #333333;
+      min-width: 48px;
+      text-align: right;
+    }
+
+    /* ── INSIGHT CALLOUT ── */
+    .callout {
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .callout-navy { background: #E8EEF8; border: 1px solid #C3D2EC; }
+    .callout-red { background: #FDECEA; border: 1px solid #F8C8C6; }
+    .callout-green { background: #E6F9E8; border: 1px solid #BAEDC0; }
+    .callout-gold { background: #FEF6D9; border: 1px solid #F5E094; }
+    .callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 14px; color: #333333; line-height: 1.65; }
+    .callout-body strong { font-weight: 700; color: #1E1E1E; }
+
+    /* ── RECOMMENDATION CARD ── */
+    .rec-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      margin-bottom: 16px;
+    }
+    .rec-card .rec-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FF6803;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .rec-card .rec-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .rec-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1E1E1E;
+    }
+    .rec-card p {
+      font-size: 14px;
+      color: #525252;
+      line-height: 1.65;
+      padding-left: 44px;
+    }
+    .rec-card .impact {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 44px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 50px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #CCCCCC;
+      margin: 8px 0 36px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #1E1E1E;
+      color: #A6A6A6;
+      font-size: 13px;
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 48px;
+    }
+    .footer img { height: 22px; filter: brightness(0) invert(1); opacity: 0.5; }
+
+    /* ── MINI FUNNEL TABLE ── */
+    .mini-funnel {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .mini-funnel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .mini-funnel-row:last-child { border-bottom: none; }
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FF6803;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-dot.navy { background: #043B87; }
+    .mini-funnel-label { flex: 1; }
+    .mini-funnel-label .name { font-size: 14px; font-weight: 600; color: #1E1E1E; }
+    .mini-funnel-label .users { font-size: 12px; color: #787878; }
+    .mini-funnel-pct {
+      font-size: 13px;
+      font-weight: 700;
+      color: #525252;
+    }
+    .drop-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4px 0;
+    }
+    .drop-line {
+      width: 2px;
+      height: 28px;
+      background: #E0E0E0;
+      margin: 0 auto;
+      margin-left: 15px;
+    }
+    .drop-badge {
+      margin-left: 15px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 50px;
+    }
+    .drop-badge.critical { background: #FDECEA; color: #F20C1A; }
+    .drop-badge.warning { background: #FEF6E4; color: #E07A00; }
+    .drop-badge.ok { background: #E6F9E8; color: #28A534; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" />
+  <span class="header-meta">Acquisition Funnel Analysis &nbsp;·&nbsp; <span>Jan 14 – Apr 13, 2026</span></span>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">GA4 · ucook.co.za</p>
+    <h1>Acquisition Funnel Analysis</h1>
+    <p>A deep-dive into On Demand and Subscription funnel performance across devices and session sources — surfacing critical pain points, red flags, and conversion wins.</p>
+    <div class="hero-period">📅 14 January 2026 – 13 April 2026 (90 days)</div>
+  </div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<section style="background:#FFFFFF; padding: 52px 0;">
+  <div class="container">
+    <p class="section-label">Executive Summary</p>
+    <h2 class="section-title">Top-Line Numbers</h2>
+    <p class="section-sub">187,405 users entered the site. The On Demand funnel converted 1,291 to purchase (0.69%); the Subscription funnel converted 314 (0.17%). Both funnels have identifiable, fixable bottlenecks.</p>
+
+    <div class="kpi-grid">
+      <div class="kpi-card orange">
+        <div class="label">Total Site Visitors</div>
+        <div class="value">187,405</div>
+        <div class="sub">Jan 14 – Apr 13, 2026</div>
+      </div>
+      <div class="kpi-card navy">
+        <div class="label">On Demand Purchases</div>
+        <div class="value">1,291</div>
+        <div class="sub">0.69% end-to-end conversion</div>
+      </div>
+      <div class="kpi-card navy">
+        <div class="label">Subscription Purchases</div>
+        <div class="value">314</div>
+        <div class="sub">0.17% end-to-end conversion</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="label">Mobile Traffic Share</div>
+        <div class="value">78.9%</div>
+        <div class="sub">Converts 2.5× worse than desktop</div>
+      </div>
+    </div>
+
+    <div class="callout callout-navy">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>The single biggest lever across both funnels is the Plans/Menu Page in the Subscription funnel.</strong> Of the 103,387 users who navigate to plans or the meal kit menu, only 1,697 (1.6%) confirm a subscription — a 98.4% abandonment rate at the most intent-heavy step. Fixing this one bottleneck could materially transform subscription revenue.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ON DEMAND FUNNEL -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <p class="section-label">On Demand Funnel</p>
+    <h2 class="section-title">On Demand: Step-by-Step Breakdown</h2>
+    <p class="section-sub">4-step journey: Home Page → Frozen Product Page → Add to Cart → Purchase</p>
+
+    <div class="two-col">
+      <!-- Funnel flow card -->
+      <div class="funnel-section">
+        <h3>Overall On Demand Funnel</h3>
+        <div class="funnel-period">All devices · 187,405 total visitors</div>
+        <div class="mini-funnel">
+          <div class="mini-funnel-row">
+            <div class="step-dot">1</div>
+            <div class="mini-funnel-label">
+              <div class="name">Home Page</div>
+              <div class="users">187,405 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-orange">100%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge critical">↓ 84.3% drop</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot">2</div>
+            <div class="mini-funnel-label">
+              <div class="name">Frozen Product Page</div>
+              <div class="users">29,413 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-red">15.7%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge critical">↓ 90.1% drop</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot">3</div>
+            <div class="mini-funnel-label">
+              <div class="name">Add to Cart</div>
+              <div class="users">2,916 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-red">9.9%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge warning">↓ 55.7% drop</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot navy">4</div>
+            <div class="mini-funnel-label">
+              <div class="name">Purchase ✓</div>
+              <div class="users">1,291 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-navy">0.69%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device breakdown -->
+      <div class="table-wrap" style="margin-bottom:0;">
+        <h4>On Demand Conversion by Device</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Device</th>
+              <th>Visitors</th>
+              <th>Traffic %</th>
+              <th>Step 2→3</th>
+              <th>Step 3→4</th>
+              <th>End-to-end</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="strong">Total</td>
+              <td>187,405</td>
+              <td>100%</td>
+              <td>9.9%</td>
+              <td>44.3%</td>
+              <td class="highlight">0.69%</td>
+            </tr>
+            <tr>
+              <td class="strong">Mobile 📱</td>
+              <td>147,798</td>
+              <td class="highlight">78.9%</td>
+              <td class="danger">8.8%</td>
+              <td class="danger">38.8%</td>
+              <td class="danger">0.52%</td>
+            </tr>
+            <tr>
+              <td class="strong">Desktop 🖥</td>
+              <td>37,755</td>
+              <td>20.1%</td>
+              <td class="success">14.0%</td>
+              <td class="success">56.5%</td>
+              <td class="success">1.33%</td>
+            </tr>
+            <tr>
+              <td class="strong">Tablet</td>
+              <td>1,891</td>
+              <td>1.0%</td>
+              <td>9.6%</td>
+              <td>48.3%</td>
+              <td>0.74%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-red" style="margin-top:20px; margin-bottom:0;">
+          <span class="callout-icon">🚨</span>
+          <div class="callout-body">
+            <strong>Mobile converts at 0.52% vs desktop's 1.33%</strong> — a 2.5× gap — yet mobile accounts for 79% of all traffic. This is the highest-leverage device optimisation opportunity across both funnels.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Device conversion bars -->
+    <div class="table-wrap" style="margin-top:24px;">
+      <h4>Product Page → Add to Cart Conversion Rate by Device</h4>
+      <div class="bar-row">
+        <span class="bar-label">Desktop</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%; background:#32BE3F;"></div></div>
+        <span class="bar-pct" style="color:#32BE3F;">14.0%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Tablet</span>
+        <div class="bar-track"><div class="bar-fill" style="width:68.6%; background:#FCD266;"></div></div>
+        <span class="bar-pct" style="color:#9A6E00;">9.6%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Mobile</span>
+        <div class="bar-track"><div class="bar-fill" style="width:62.9%; background:#F20C1A;"></div></div>
+        <span class="bar-pct" style="color:#F20C1A;">8.8%</span>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="margin-bottom:16px;">Add to Cart → Purchase Conversion Rate by Device</h4>
+        <div class="bar-row">
+          <span class="bar-label">Desktop</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%; background:#32BE3F;"></div></div>
+          <span class="bar-pct" style="color:#32BE3F;">56.5%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Tablet</span>
+          <div class="bar-track"><div class="bar-fill" style="width:85.5%; background:#FCD266;"></div></div>
+          <span class="bar-pct" style="color:#9A6E00;">48.3%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Mobile</span>
+          <div class="bar-track"><div class="bar-fill" style="width:68.7%; background:#F20C1A;"></div></div>
+          <span class="bar-pct" style="color:#F20C1A;">38.8%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session source breakdown -->
+    <div class="table-wrap">
+      <h4>On Demand Conversion by Session Source</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Visitors</th>
+            <th>Home→Product</th>
+            <th>Product→Cart</th>
+            <th>Cart→Purchase</th>
+            <th>End-to-end</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="strong">Total</td>
+            <td>187,405</td>
+            <td>15.7%</td>
+            <td>9.9%</td>
+            <td>44.3%</td>
+            <td class="highlight">0.69%</td>
+          </tr>
+          <tr>
+            <td class="strong">Manual / Organic</td>
+            <td>80,421</td>
+            <td>13.8%</td>
+            <td>8.3%</td>
+            <td class="danger">34.5%</td>
+            <td class="danger">0.39%</td>
+          </tr>
+          <tr>
+            <td class="strong">Google Ads</td>
+            <td>61,252</td>
+            <td class="success">18.2%</td>
+            <td class="danger">7.0%</td>
+            <td>37.0%</td>
+            <td>0.47%</td>
+          </tr>
+          <tr>
+            <td class="strong">(not set)*</td>
+            <td>45,354</td>
+            <td>16.0%</td>
+            <td class="success">16.8%</td>
+            <td class="success">56.3%</td>
+            <td class="success">1.51%</td>
+          </tr>
+          <tr>
+            <td class="strong">Shopping Free Listings</td>
+            <td>36</td>
+            <td class="danger">0%</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="danger">0%</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#787878;margin-top:10px;">* "(not set)" likely represents returning/direct users or sessions where attribution was not captured. Their 3× higher conversion points to brand-familiar, high-intent audiences.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SUBSCRIPTION FUNNEL -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section style="background:#FFFFFF; padding:52px 0;">
+  <div class="container">
+    <p class="section-label">Subscription Funnel</p>
+    <h2 class="section-title">Subscription: Step-by-Step Breakdown</h2>
+    <p class="section-sub">5-step journey: Home Page → Plans / Meal Kit Menu → Confirm Subscription → Add to Cart → Purchase</p>
+
+    <div class="two-col">
+      <!-- Funnel flow card -->
+      <div class="funnel-section">
+        <h3>Overall Subscription Funnel</h3>
+        <div class="funnel-period">All sources · 187,405 total visitors</div>
+        <div class="mini-funnel">
+          <div class="mini-funnel-row">
+            <div class="step-dot">1</div>
+            <div class="mini-funnel-label">
+              <div class="name">Home Page</div>
+              <div class="users">187,405 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-orange">100%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge warning">↓ 44.8% drop</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot">2</div>
+            <div class="mini-funnel-label">
+              <div class="name">Plans / Meal Kit Menu Page</div>
+              <div class="users">103,387 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-green">55.2%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge critical">↓ 98.4% drop ⚠️</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot">3</div>
+            <div class="mini-funnel-label">
+              <div class="name">Confirm Subscription</div>
+              <div class="users">1,697 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-red">1.6%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge critical">↓ 75.7% drop</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot">4</div>
+            <div class="mini-funnel-label">
+              <div class="name">Add to Cart</div>
+              <div class="users">412 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-red">0.22%</span></div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="display:flex;flex-direction:column;align-items:center;padding-left:15px;">
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+              <span class="drop-badge ok">↓ 23.8% drop</span>
+              <div style="width:2px;height:20px;background:#E0E0E0;"></div>
+            </div>
+          </div>
+          <div class="mini-funnel-row">
+            <div class="step-dot navy">5</div>
+            <div class="mini-funnel-label">
+              <div class="name">Purchase ✓</div>
+              <div class="users">314 users</div>
+            </div>
+            <div class="mini-funnel-pct"><span class="pill pill-navy">0.17%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Source breakdown -->
+      <div class="table-wrap" style="margin-bottom:0;">
+        <h4>Subscription Conversion by Session Source</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Visitors</th>
+              <th>Home→Plans</th>
+              <th>Plans→Confirm</th>
+              <th>ATC→Purchase</th>
+              <th>End-to-end</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="strong">Total</td>
+              <td>187,405</td>
+              <td>55.2%</td>
+              <td class="danger">1.64%</td>
+              <td>76.2%</td>
+              <td class="highlight">0.17%</td>
+            </tr>
+            <tr>
+              <td class="strong">Manual / Organic</td>
+              <td>80,421</td>
+              <td>53.5%</td>
+              <td class="danger">0.49%</td>
+              <td class="danger">58.9%</td>
+              <td class="danger">0.04%</td>
+            </tr>
+            <tr>
+              <td class="strong">Google Ads</td>
+              <td>61,252</td>
+              <td class="danger">49.1%</td>
+              <td>1.30%</td>
+              <td class="success">82.6%</td>
+              <td>0.09%</td>
+            </tr>
+            <tr>
+              <td class="strong">(not set)*</td>
+              <td>45,354</td>
+              <td class="success">68.5%</td>
+              <td class="success">3.52%</td>
+              <td class="success">78.1%</td>
+              <td class="success">0.49%</td>
+            </tr>
+            <tr>
+              <td class="strong">Shopping Free Listings</td>
+              <td>36</td>
+              <td>19.4%</td>
+              <td class="danger">0%</td>
+              <td>—</td>
+              <td class="danger">0%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-gold" style="margin-top:20px; margin-bottom:0;">
+          <span class="callout-icon">⭐</span>
+          <div class="callout-body">
+            <strong>(not set) / returning users convert at 3.52%</strong> on Plans→Confirm vs only 0.49% for Manual and 1.30% for Google Ads. The goal should be to engineer the same sense of familiarity and trust for cold acquisition traffic.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plans→Confirm breakdown bars -->
+    <div class="table-wrap" style="margin-top:24px;">
+      <h4>Plans / Menu Page → Confirm Subscription — by Source</h4>
+      <p style="font-size:13px;color:#787878;margin-bottom:20px;">This is the single most critical step in the subscription funnel.</p>
+      <div class="bar-row">
+        <span class="bar-label">(not set)</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%; background:#32BE3F;"></div></div>
+        <span class="bar-pct" style="color:#32BE3F;">3.52%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Google Ads</span>
+        <div class="bar-track"><div class="bar-fill" style="width:36.9%; background:#FCD266;"></div></div>
+        <span class="bar-pct" style="color:#9A6E00;">1.30%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Manual</span>
+        <div class="bar-track"><div class="bar-fill" style="width:13.9%; background:#F20C1A;"></div></div>
+        <span class="bar-pct" style="color:#F20C1A;">0.49%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- RED FLAGS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <p class="section-label">Pain Points</p>
+    <h2 class="section-title">🚨 Red Flags</h2>
+    <p class="section-sub">Critical issues requiring immediate investigation and remediation.</p>
+
+    <div class="flag-card">
+      <h4>
+        <span>1. Subscription Plans/Menu Page: 98.4% Abandonment</span>
+        <span class="badge badge-red">Critical</span>
+      </h4>
+      <p>
+        103,387 users reach the Plans Page or Meal Kit Menu Page — but only 1,697 proceed to confirm a subscription. This is the single biggest revenue leak across both funnels. Something about this page is causing almost all users to leave: pricing friction, overwhelming choice, a lack of trust signals, or an unclear value proposition.
+      </p>
+      <div>
+        <span class="metric red">103,387 entered</span>
+        <span class="metric red">101,690 abandoned</span>
+        <span class="metric">Only 1,697 continued</span>
+        <span class="metric red">98.4% drop-off</span>
+      </div>
+    </div>
+
+    <div class="flag-card">
+      <h4>
+        <span>2. On Demand Product Page: 90% Abandonment</span>
+        <span class="badge badge-red">Critical</span>
+      </h4>
+      <p>
+        Of the 29,413 users who reach the Frozen Product Page, only 2,916 add to cart. This 90.1% abandonment rate suggests the product page is not closing the intent that was generated at the Home Page. Poor product presentation, price anchoring, limited product variety, or a confusing UX are likely contributors.
+      </p>
+      <div>
+        <span class="metric red">90.1% abandonment</span>
+        <span class="metric">9.9% proceed to cart</span>
+        <span class="metric orange">26,497 lost here</span>
+      </div>
+    </div>
+
+    <div class="flag-card">
+      <h4>
+        <span>3. Mobile Underperforms Desktop by 2.5× Across the Board</span>
+        <span class="badge badge-red">Critical</span>
+      </h4>
+      <p>
+        Mobile accounts for 78.9% of all traffic yet converts at just 0.52% end-to-end, versus 1.33% on desktop. The gap is present at every funnel step — product page engagement (8.8% vs 14.0%), checkout completion (38.8% vs 56.5%), and overall purchase rate. With mobile being the dominant channel, every percentage point improvement here has outsized revenue impact.
+      </p>
+      <div>
+        <span class="metric red">0.52% mobile e2e</span>
+        <span class="metric green">1.33% desktop e2e</span>
+        <span class="metric orange">2.5× gap</span>
+        <span class="metric">78.9% of traffic is mobile</span>
+      </div>
+    </div>
+
+    <div class="flag-card warn">
+      <h4>
+        <span>4. Google Ads Traffic Underperforms in the Subscription Funnel</span>
+        <span class="badge badge-warn">Concern</span>
+      </h4>
+      <p>
+        Google Ads is the second largest traffic source (61,252 visitors) but converts to subscription purchase at only 0.09% — far below (not set) traffic at 0.49%. Critically, it has the lowest Plans→Confirm conversion at 1.30%, and even its Home→Plans step is the weakest among sources (49.1%). Given this is paid traffic with a clear cost-per-click, the ROI on Google Ads for the subscription product needs immediate review.
+      </p>
+      <div>
+        <span class="metric red">0.09% sub conversion</span>
+        <span class="metric">Paid traffic</span>
+        <span class="metric red">49.1% reach Plans page</span>
+        <span class="metric orange">vs 68.5% for (not set)</span>
+      </div>
+    </div>
+
+    <div class="flag-card warn">
+      <h4>
+        <span>5. Manual Traffic Has Weak Cart Completion in On Demand</span>
+        <span class="badge badge-warn">Concern</span>
+      </h4>
+      <p>
+        Manual / organic traffic converts from cart to purchase at only 34.5% in the On Demand funnel — 22 percentage points below (not set) users (56.3%). Since organic traffic represents the largest source (80,421 visitors), improving cart completion for this segment would have meaningful revenue impact.
+      </p>
+      <div>
+        <span class="metric red">34.5% cart→purchase (manual)</span>
+        <span class="metric green">56.3% cart→purchase (not set)</span>
+      </div>
+    </div>
+
+    <div class="flag-card warn">
+      <h4>
+        <span>6. Shopping Free Listings: Zero Conversions</span>
+        <span class="badge badge-warn">Monitor</span>
+      </h4>
+      <p>
+        36 users arrived via Shopping Free Listings over 90 days. Zero proceeded past the Home Page in the On Demand funnel, and only 7 reached the Plans page in the Subscription funnel (none converted). While the volume is currently tiny, this channel is yielding no value and may indicate a product feed mismatch or incorrect landing page routing.
+      </p>
+      <div>
+        <span class="metric red">0 On Demand purchases</span>
+        <span class="metric red">0 Subscription purchases</span>
+        <span class="metric">36 users, 90 days</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- WINS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section style="background:#FFFFFF; padding:52px 0;">
+  <div class="container">
+    <p class="section-label">Wins</p>
+    <h2 class="section-title">✅ What's Working</h2>
+    <p class="section-sub">Validated strengths and signals that should be amplified and replicated across weaker segments.</p>
+
+    <div class="win-card">
+      <h4>
+        <span>🏠 &nbsp;55% of All Visitors Navigate to Plans/Menu (Strong Top-of-Funnel Intent)</span>
+        <span class="badge badge-navy" style="margin-left:8px;">Win</span>
+      </h4>
+      <p>
+        Over half of all 187,405 visitors proceed from the Home Page to the Plans or Meal Kit Menu page — demonstrating that UCOOK's homepage is effectively generating subscription consideration. The problem is not attracting interested users; it's converting them once they reach the plans page. The intent is there; the page needs to close it.
+      </p>
+    </div>
+
+    <div class="win-card">
+      <h4>
+        <span>💳 &nbsp;76.2% of Subscription Add-to-Cart Users Complete Purchase</span>
+        <span class="badge badge-navy" style="margin-left:8px;">Win</span>
+      </h4>
+      <p>
+        Once a user adds a subscription to cart (412 users), 76.2% follow through to purchase (314 users). This is a strong signal that checkout friction is relatively low and that users who cross the Confirm Subscription step are highly committed. The bottleneck is upstream — getting more users to Confirm.
+      </p>
+    </div>
+
+    <div class="win-card">
+      <h4>
+        <span>📈 &nbsp;Google Ads Has the Strongest Final Purchase Conversion in Subscription (82.6%)</span>
+        <span class="badge badge-navy" style="margin-left:8px;">Win</span>
+      </h4>
+      <p>
+        Among users who add a subscription to cart, Google Ads converts 82.6% to purchase — the highest of any source. This means the Google Ads audience, once deeply engaged in the funnel, is highly motivated to buy. The challenge is the earlier funnel steps. If Google Ads landing and plans-page experience can be improved, this closing strength could deliver significantly more revenue.
+      </p>
+    </div>
+
+    <div class="win-card">
+      <h4>
+        <span>🎯 &nbsp;(Not Set) / Returning Users Convert 3× Better at Every Step</span>
+        <span class="badge badge-navy" style="margin-left:8px;">Win</span>
+      </h4>
+      <p>
+        (Not set) users — likely brand-familiar, returning, or direct visitors — convert at 3.52% on the Plans→Confirm step vs 0.49% for Manual and 1.30% for Google Ads. Their end-to-end subscription conversion of 0.49% is nearly 5× the Manual baseline (0.04%). This is the benchmark: understanding what makes these users convert and replicating the experience for cold traffic is the key strategic insight from this data.
+      </p>
+    </div>
+
+    <div class="win-card">
+      <h4>
+        <span>🖥 &nbsp;Desktop Checkout Is Strong: 56.5% Cart-to-Purchase in On Demand</span>
+        <span class="badge badge-navy" style="margin-left:8px;">Win</span>
+      </h4>
+      <p>
+        Desktop users complete the On Demand cart-to-purchase step at 56.5% — a healthy checkout completion rate. Paired with a 14.0% product-page-to-cart rate (vs 8.8% mobile), desktop shows the full funnel can work well. The challenge is that desktop is only 20% of traffic, and the mobile experience must be brought up to match this standard.
+      </p>
+    </div>
+
+    <div class="win-card">
+      <h4>
+        <span>🔁 &nbsp;Brand Familiarity Dramatically Improves Every Metric</span>
+        <span class="badge badge-navy" style="margin-left:8px;">Win</span>
+      </h4>
+      <p>
+        Across both funnels, the (not set) cohort — representing users with prior exposure to UCOOK — outperforms cold acquisition traffic at every single funnel step. In the Subscription funnel they also have the highest Home→Plans progression at 68.5%. Investing in retention, remarketing, and brand recall for acquisition traffic is likely to yield stronger funnel-wide improvements than pure top-of-funnel volume.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- RECOMMENDATIONS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <p class="section-label">Next Steps</p>
+    <h2 class="section-title">Priority Recommendations</h2>
+    <p class="section-sub">Ranked by potential impact based on funnel volume and drop-off severity.</p>
+
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-num">1</div>
+        <h4>Redesign the Plans / Meal Kit Menu Page Experience</h4>
+      </div>
+      <p>Audit the Plans page for friction: pricing clarity, plan comparison layout, social proof, and CTA prominence. Consider A/B testing a simplified plan selection flow with fewer choices, stronger benefit messaging, and mobile-first layout. The 98.4% drop-off from 103k users makes this the highest-return fix on the site.</p>
+      <span class="impact" style="background:#FDECEA;color:#F20C1A;">🚨 Highest Impact · Subscription</span>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-num">2</div>
+        <h4>Optimise the Mobile Funnel End-to-End</h4>
+      </div>
+      <p>Run a full mobile UX audit across the product page (tap targets, image quality, product copy), cart experience, and checkout flow. The 2.5× gap between mobile and desktop suggests systemic friction — not isolated bugs. Prioritise mobile checkout form usability, payment method options, and page load speed.</p>
+      <span class="impact" style="background:#FFF0E6;color:#FF6803;">⚠️ High Impact · Both Funnels</span>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-num">3</div>
+        <h4>Improve the Frozen Product Page to Lift Add-to-Cart Rate</h4>
+      </div>
+      <p>The 90% abandonment on the product page is severe. Review product imagery quality, description copy, pricing presentation, and the prominence of the add-to-cart CTA. Consider introducing social proof elements (reviews, ratings, purchase counts) and clearer delivery / freshness guarantees directly on product cards.</p>
+      <span class="impact" style="background:#FFF0E6;color:#FF6803;">⚠️ High Impact · On Demand</span>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-num">4</div>
+        <h4>Review Google Ads Landing Page Alignment for Subscription</h4>
+      </div>
+      <p>Google Ads traffic is not converting in the subscription funnel (0.09%) despite being a paid, intent-driven channel. Review whether ads are landing on the correct subscription pages, whether ad copy matches the landing page offer, and whether targeting is reaching new vs. returning user segments appropriately. Given Google Ads' strong close rate (82.6%) once engaged, fixing the top-of-funnel alignment could significantly improve paid ROAS.</p>
+      <span class="impact" style="background:#FEF6D9;color:#9A6E00;">📊 Medium Impact · Subscription</span>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-num">5</div>
+        <h4>Investigate and Attribute "(Not Set)" Traffic</h4>
+      </div>
+      <p>The (not set) cohort converts at 3–5× the rate of attributed sources. Understanding who these users are — likely direct traffic, returning customers, or referrals with broken UTM tagging — is critical. Improving UTM attribution across all campaigns and channels will allow UCOOK to understand which efforts are actually driving high-value converters and invest accordingly.</p>
+      <span class="impact" style="background:#E8EEF8;color:#043B87;">🔍 Strategic · Both Funnels</span>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-num">6</div>
+        <h4>Review or Pause Shopping Free Listings</h4>
+      </div>
+      <p>36 users, 0 conversions in 90 days. While the volume is low, the 0% conversion rate warrants a review of the product feed, landing page routing, and whether the channel is reaching the right audience. Either optimise the feed and landing experience or de-prioritise the channel.</p>
+      <span class="impact" style="background:#F0F0F0;color:#525252;">📋 Low Priority · Quick Win</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" />
+  <span>Acquisition Funnel Analysis · GA4 · Jan 14 – Apr 13, 2026 · Prepared for UCOOK Growth Team</span>
+</footer>
+
+</body>
+</html>

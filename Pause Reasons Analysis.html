@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pause Reasons Analysis — UCOOK Customer Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  /* === UCOOK Design System === */
+  :root {
+    --uc-orange: #FF6803;
+    --uc-orange-dark: #E87543;
+    --uc-navy: #043B87;
+    --uc-blue-dark: #1D5D90;
+    --uc-blue-mid: #216BA5;
+    --uc-green: #32BE3F;
+    --uc-gold: #FCD266;
+    --uc-pink: #DF346D;
+    --uc-red: #F20C1A;
+    --text-black: #1E1E1E;
+    --text-dark: #333333;
+    --text-med: #525252;
+    --text-muted: #787878;
+    --border: #CCCCCC;
+    --surface: #F0F0F0;
+    --white: #FFFFFF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--surface);
+    color: var(--text-dark);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* === HEADER === */
+  .header {
+    background: var(--uc-navy);
+    color: var(--white);
+    padding: 40px 48px 36px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .header-logo {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--uc-orange);
+    letter-spacing: -0.03em;
+  }
+  .header-logo span { color: var(--white); }
+  .header-meta { text-align: right; }
+  .header-meta p { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-top: 28px;
+    max-width: 600px;
+  }
+  .header .subtitle {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 8px;
+    font-weight: 400;
+  }
+
+  /* === LAYOUT === */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .section { padding: 40px 0; }
+  .section + .section { border-top: 1px solid var(--border); }
+
+  /* === KPI STRIP === */
+  .kpi-strip {
+    background: var(--white);
+    border-bottom: 3px solid var(--uc-orange);
+    padding: 32px 48px;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .kpi-card {
+    text-align: center;
+  }
+  .kpi-number {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--uc-orange);
+    line-height: 1;
+  }
+  .kpi-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+  }
+  .kpi-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* === SECTION HEADINGS === */
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--uc-orange);
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-black);
+    margin-bottom: 6px;
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+  }
+  .section-intro {
+    font-size: 0.92rem;
+    color: var(--text-med);
+    max-width: 720px;
+    margin-bottom: 28px;
+  }
+
+  /* === PAIN POINT TAGS === */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .tag-critical  { background: #FFEAEA; color: var(--uc-red); border: 1px solid #ffb3b3; }
+  .tag-high      { background: #FFF2E8; color: #C45000; border: 1px solid #ffc89e; }
+  .tag-growing   { background: #FFF8E1; color: #8a6500; border: 1px solid #f5d06a; }
+  .tag-moderate  { background: #EBF3FF; color: var(--uc-blue-dark); border: 1px solid #b3ceee; }
+  .tag-niche     { background: #F0FFF2; color: #1e7a27; border: 1px solid #a3dba8; }
+  .tag-quickwin  { background: #E8F5FF; color: #004a87; border: 1px solid #90c9f5; }
+
+  /* === PAIN POINT CARDS === */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 8px;
+  }
+  .pain-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 22px 24px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .pain-card.dominant { border-left: 4px solid var(--uc-red); }
+  .pain-card.growing  { border-left: 4px solid var(--uc-gold); }
+  .pain-card.moderate { border-left: 4px solid var(--uc-blue-mid); }
+  .pain-card.niche    { border-left: 4px solid var(--uc-green); }
+
+  .pain-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .pain-title { font-size: 1rem; font-weight: 700; color: var(--text-black); }
+  .pain-count {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--uc-orange);
+    white-space: nowrap;
+  }
+  .pain-pct {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: right;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .bar-track {
+    background: var(--surface);
+    border-radius: 4px;
+    height: 6px;
+    margin: 10px 0 12px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--uc-orange);
+  }
+
+  .trend-row {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .trend-month {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 42px;
+  }
+  .trend-bar-wrap {
+    height: 32px;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+  .trend-bar {
+    width: 28px;
+    background: var(--uc-orange);
+    border-radius: 3px 3px 0 0;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+  }
+  .trend-bar.up { opacity: 1; background: var(--uc-red); }
+  .trend-label { font-size: 0.65rem; text-align: center; color: var(--text-muted); margin-top: 2px; }
+  .trend-val { font-size: 0.72rem; font-weight: 700; color: var(--text-dark); }
+
+  .mini-trend {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    height: 36px;
+    margin: 8px 0;
+  }
+  .mini-bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .mini-bar {
+    width: 22px;
+    background: var(--uc-orange);
+    border-radius: 2px 2px 0 0;
+    min-height: 3px;
+  }
+  .mini-bar-label { font-size: 0.6rem; color: var(--text-muted); }
+  .mini-bar-val   { font-size: 0.65rem; font-weight: 700; color: var(--text-dark); }
+
+  .verbatim {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: var(--text-med);
+    font-style: italic;
+    margin-top: 10px;
+    border-left: 3px solid var(--border);
+    line-height: 1.5;
+  }
+  .verbatim + .verbatim { margin-top: 6px; }
+
+  /* === TREND SECTION === */
+  .trend-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .trend-table th {
+    background: var(--uc-navy);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .trend-table th.num { text-align: center; }
+  .trend-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--surface);
+    vertical-align: middle;
+  }
+  .trend-table td.num { text-align: center; font-weight: 700; }
+  .trend-table tr:last-child td { border-bottom: none; }
+  .trend-table tr:hover td { background: #fdf5f0; }
+
+  .trend-arrow { font-size: 1rem; }
+  .arrow-up    { color: var(--uc-red); }
+  .arrow-same  { color: var(--text-muted); }
+  .arrow-down  { color: var(--uc-green); }
+
+  .growth-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .growth-high   { background: #FFEAEA; color: var(--uc-red); }
+  .growth-med    { background: #FFF8E1; color: #8a6500; }
+  .growth-low    { background: #EBF3FF; color: var(--uc-blue-dark); }
+  .growth-stable { background: var(--surface); color: var(--text-muted); }
+
+  /* === QUICK WINS === */
+  .qw-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .qw-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--uc-orange);
+  }
+  .qw-number {
+    width: 30px; height: 30px;
+    background: var(--uc-orange);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .qw-title { font-size: 0.95rem; font-weight: 700; color: var(--text-black); margin-bottom: 8px; }
+  .qw-body  { font-size: 0.82rem; color: var(--text-med); line-height: 1.6; }
+  .qw-impact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--surface);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .impact-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* === DATA QUALITY NOTE === */
+  .data-note {
+    background: #FFF8E1;
+    border: 1px solid #f5d06a;
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 0.82rem;
+    color: #6b5000;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 24px;
+  }
+  .data-note-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* === LIFESTYLE CALLOUT === */
+  .lifestyle-callout {
+    background: var(--uc-navy);
+    border-radius: 12px;
+    padding: 22px 26px;
+    color: var(--white);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-top: 20px;
+  }
+  .lifestyle-callout .pct {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--uc-gold);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .lifestyle-callout p { font-size: 0.88rem; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .lifestyle-callout strong { color: var(--white); }
+
+  /* === FOOTER === */
+  .footer {
+    background: var(--uc-navy);
+    color: rgba(255,255,255,0.5);
+    font-size: 0.75rem;
+    padding: 24px 48px;
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: repeat(2,1fr); }
+    .pain-grid, .qw-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; }
+    .header-meta { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-logo">U<span>COOK</span></div>
+    <h1>Pause Reasons Analysis</h1>
+    <p class="subtitle">Customer Journey · Pain Point Tagging · Trends & Quick Wins · Jan – Apr 2026</p>
+  </div>
+  <div class="header-meta">
+    <p>Prepared for: Customer Journey Team</p>
+    <p>Date: April 2026</p>
+    <p>Dataset: Pause Reasons.csv</p>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-number">661</div>
+      <div class="kpi-label">Total Pause Events</div>
+      <div class="kpi-sub">Jan 15 – Apr 13, 2026</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">418</div>
+      <div class="kpi-label">Meaningful Responses</div>
+      <div class="kpi-sub">63.2% signal rate</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">11</div>
+      <div class="kpi-label">Pain Point Categories</div>
+      <div class="kpi-sub">Tagged from free-text</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-number">5</div>
+      <div class="kpi-label">Quick Wins Identified</div>
+      <div class="kpi-sub">Actionable without major build</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div style="background:var(--white); padding: 0 48px;">
+<div class="container">
+
+  <!-- INTRO / DATA QUALITY NOTE -->
+  <div class="section">
+    <div class="section-label">Dataset Overview</div>
+    <h2>About This Analysis</h2>
+    <p class="section-intro">
+      All 661 entries in the dataset are tagged as <strong>"Other"</strong> — meaning every pause event in this file is a free-text response customers provided in the open field. Entries were classified into pain point categories using keyword and semantic matching. Some entries carry more than one tag where multiple issues were cited.
+    </p>
+
+    <div class="lifestyle-callout">
+      <div class="pct">21%</div>
+      <div>
+        <strong>Lifestyle &amp; temporary pauses dominate the benign category.</strong>
+        <p>Travel, holidays, family visits, and similar life events account for 139 entries. These pauses are healthy — they signal customers who still love the product but need to pause contextually. They are excluded from the actionable pain point analysis below.</p>
+      </div>
+    </div>
+
+    <div class="data-note">
+      <span class="data-note-icon">⚠️</span>
+      <div>
+        <strong>Data quality signal:</strong> 243 entries (36.8%) are blank, single characters, test entries ("test", "dev testing"), or meaningless text. This suggests the pause-reason field is not mandatory or prominent enough. A recommendation: make the reason field more structured with pre-set options, or require a minimum character count.
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- DOMINANT PAIN POINTS -->
+<div style="background:var(--surface); padding: 0 48px;">
+<div class="container">
+  <div class="section">
+    <div class="section-label">Pain Point Tagging</div>
+    <h2>Dominant Pain Points</h2>
+    <p class="section-intro">
+      Pain points are classified by volume and sentiment impact. <span class="tag tag-critical">Critical</span> indicates high volume and high churn risk. <span class="tag tag-growing">Growing</span> flags categories that are accelerating month-over-month.
+    </p>
+
+    <div class="pain-grid">
+
+      <!-- 1. PRICING -->
+      <div class="pain-card dominant">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Pricing &amp; Affordability</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="tag tag-critical">Critical</span>
+              <span class="tag tag-growing">Growing ↑</span>
+            </div>
+          </div>
+          <div>
+            <div class="pain-count">44</div>
+            <div class="pain-pct">6.7% of all entries<br>10.5% of meaningful</div>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Monthly trend — Jan to Apr 2026:</div>
+        <div class="mini-trend">
+          <div class="mini-bar-col">
+            <div class="mini-bar-val">4</div>
+            <div class="mini-bar" style="height:8px; background:#ccc;"></div>
+            <div class="mini-bar-label">Jan</div>
+          </div>
+          <div class="mini-bar-col">
+            <div class="mini-bar-val">12</div>
+            <div class="mini-bar" style="height:18px;"></div>
+            <div class="mini-bar-label">Feb</div>
+          </div>
+          <div class="mini-bar-col">
+            <div class="mini-bar-val">22</div>
+            <div class="mini-bar" style="height:32px; background:#F20C1A;"></div>
+            <div class="mini-bar-label">Mar</div>
+          </div>
+          <div class="mini-bar-col">
+            <div class="mini-bar-val">6</div>
+            <div class="mini-bar" style="height:10px;"></div>
+            <div class="mini-bar-label">Apr*</div>
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;"><em>*Apr is partial (to 13 Apr)</em></p>
+        <div class="verbatim">"It's a bit expensive, but wonderful. I would rather pause and unpause or if possible, schedule automatically for every 2 or 3 weeks instead of every week."</div>
+        <div class="verbatim">"I can only afford to order when you are running specials like 30% off."</div>
+        <div class="verbatim">"The portions worked out too little for some members in my family and if I order more to make up for that then it becomes too pricey."</div>
+        <div style="margin-top:14px;font-size:0.8rem;color:var(--text-muted);"><strong>Key insight:</strong> Price sensitivity has nearly <strong>5.5× increased</strong> from January to March. This correlates with customers feeling the post-holiday financial squeeze. Many note they love the product but can't justify weekly spend.</div>
+      </div>
+
+      <!-- 2. DISCOUNT/VOUCHER ISSUES -->
+      <div class="pain-card dominant">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Discount &amp; Voucher Issues</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="tag tag-critical">Critical</span>
+              <span class="tag tag-moderate">Consistent</span>
+            </div>
+          </div>
+          <div>
+            <div class="pain-count">41</div>
+            <div class="pain-pct">6.2% of all entries<br>9.8% of meaningful</div>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:93%"></div></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Monthly trend:</div>
+        <div class="mini-trend">
+          <div class="mini-bar-col"><div class="mini-bar-val">9</div><div class="mini-bar" style="height:18px;"></div><div class="mini-bar-label">Jan</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">13</div><div class="mini-bar" style="height:22px;"></div><div class="mini-bar-label">Feb</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">15</div><div class="mini-bar" style="height:24px;"></div><div class="mini-bar-label">Mar</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">4</div><div class="mini-bar" style="height:8px;"></div><div class="mini-bar-label">Apr*</div></div>
+        </div>
+        <div class="verbatim">"Discounts / offers are not applied automatically, which leaves a bitter aftertaste. If you send me an offer, it should not be a game that requires me to manually copy / paste and apply it… I won't be coming back."</div>
+        <div class="verbatim">"The Black Friday code didn't work — said used too many times."</div>
+        <div class="verbatim">"Second week where I get an email with discount codes that error out when I try to use it."</div>
+        <div style="margin-top:14px;font-size:0.8rem;color:var(--text-muted);"><strong>Key insight:</strong> This is the most emotionally charged category. Customers feel misled when codes they received expire before they can use them. Several explicitly stated they would not return. Affects new customers (welcome discounts) and lapsed reactivation flows equally.</div>
+      </div>
+
+      <!-- 3. SUBSCRIPTION FLEXIBILITY -->
+      <div class="pain-card growing">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Subscription Flexibility</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="tag tag-growing">Growing ↑</span>
+              <span class="tag tag-high">High Impact</span>
+            </div>
+          </div>
+          <div>
+            <div class="pain-count">38</div>
+            <div class="pain-pct">5.7% of all entries<br>9.1% of meaningful</div>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:87%;background:var(--uc-gold);"></div></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Monthly trend:</div>
+        <div class="mini-trend">
+          <div class="mini-bar-col"><div class="mini-bar-val">5</div><div class="mini-bar" style="height:12px;background:var(--uc-gold);"></div><div class="mini-bar-label">Jan</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">12</div><div class="mini-bar" style="height:22px;background:var(--uc-gold);"></div><div class="mini-bar-label">Feb</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">14</div><div class="mini-bar" style="height:26px;background:var(--uc-gold);"></div><div class="mini-bar-label">Mar</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">7</div><div class="mini-bar" style="height:14px;background:var(--uc-gold);"></div><div class="mini-bar-label">Apr*</div></div>
+        </div>
+        <div class="verbatim">"I don't like it that you automatically go ahead with the order. I would like to first check out when I am ready. I don't necessarily want to order every week."</div>
+        <div class="verbatim">"We only need it every second week. Weekly is a bit too much for us."</div>
+        <div class="verbatim">"I am fundamentally against subscriptions. I will order again when I want to. It's quite inconvenient that I have to pause my subscription every time."</div>
+        <div style="margin-top:14px;font-size:0.8rem;color:var(--text-muted);"><strong>Key insight:</strong> A large segment of customers want to be UCOOK customers but not on a weekly commit. Bi-weekly ordering and on-demand purchasing are consistently requested. This is a product model gap — not a quality issue.</div>
+      </div>
+
+      <!-- 4. DELIVERY ISSUES -->
+      <div class="pain-card growing">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Delivery Issues</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="tag tag-critical">Critical</span>
+              <span class="tag tag-growing">Growing ↑</span>
+            </div>
+          </div>
+          <div>
+            <div class="pain-count">36</div>
+            <div class="pain-pct">5.4% of all entries<br>8.6% of meaningful</div>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:82%;"></div></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Monthly trend:</div>
+        <div class="mini-trend">
+          <div class="mini-bar-col"><div class="mini-bar-val">7</div><div class="mini-bar" style="height:16px;"></div><div class="mini-bar-label">Jan</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">10</div><div class="mini-bar" style="height:20px;"></div><div class="mini-bar-label">Feb</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">14</div><div class="mini-bar" style="height:26px;background:#F20C1A;"></div><div class="mini-bar-label">Mar</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">5</div><div class="mini-bar" style="height:10px;"></div><div class="mini-bar-label">Apr*</div></div>
+        </div>
+        <div class="verbatim">"I've chosen Sunday delivery, but it always seems to end up on a Monday. I end up calling every week to sort it out. Last order, only half the order arrived Sunday, and the rest Monday morning — sat in the box all day. By the time I got home, stuff was melted."</div>
+        <div class="verbatim">"As always... I can't guarantee I'm in for delivery... I need to be able to choose a slot! Even just AM or PM is helpful."</div>
+        <div class="verbatim">"Delivery is shocking. It is so unreliable. Support is shocking. No timeous responses. Every poor experience, I give you another chance. I can't anymore, I'm done."</div>
+        <div style="margin-top:14px;font-size:0.8rem;color:var(--text-muted);"><strong>Key insight:</strong> Two sub-themes: (1) <strong>timing unpredictability</strong> — customers can't plan around delivery windows, and (2) <strong>day reliability</strong> — Sunday orders arriving Monday. Both are compounded when customers have cooking-dependent schedules.</div>
+      </div>
+
+      <!-- 5. MENU / DIETARY PREFERENCES -->
+      <div class="pain-card growing">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Menu &amp; Dietary Preferences</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="tag tag-growing">Growing ↑</span>
+              <span class="tag tag-moderate">Retention Risk</span>
+            </div>
+          </div>
+          <div>
+            <div class="pain-count">37</div>
+            <div class="pain-pct">5.6% of all entries<br>8.9% of meaningful</div>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--uc-gold);"></div></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Monthly trend:</div>
+        <div class="mini-trend">
+          <div class="mini-bar-col"><div class="mini-bar-val">3</div><div class="mini-bar" style="height:8px;background:var(--uc-gold);"></div><div class="mini-bar-label">Jan</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">12</div><div class="mini-bar" style="height:20px;background:var(--uc-gold);"></div><div class="mini-bar-label">Feb</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">17</div><div class="mini-bar" style="height:30px;background:var(--uc-gold);"></div><div class="mini-bar-label">Mar</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">5</div><div class="mini-bar" style="height:10px;background:var(--uc-gold);"></div><div class="mini-bar-label">Apr*</div></div>
+        </div>
+        <div class="verbatim">"Too few keto meals and or carnivore focused meals."</div>
+        <div class="verbatim">"Not enough choice for gluten free."</div>
+        <div class="verbatim">"Meals have become monotonous and taste the same."</div>
+        <div class="verbatim">"Too many ostrich dishes — I don't eat pork, lots of pork options over beef."</div>
+        <div style="margin-top:14px;font-size:0.8rem;color:var(--text-muted);"><strong>Key insight:</strong> Growing 5.5× from Jan to March. Sub-segments: dietary restrictions (keto, gluten-free, pork-free), family-unfriendly meals (kids won't eat them), and menu fatigue (repetitive). A family-friendly meal tier is the most-cited product gap.</div>
+      </div>
+
+      <!-- 6. PRODUCT QUALITY -->
+      <div class="pain-card growing">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Product Quality</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="tag tag-growing">Growing ↑</span>
+              <span class="tag tag-high">High Impact</span>
+            </div>
+          </div>
+          <div>
+            <div class="pain-count">29</div>
+            <div class="pain-pct">4.4% of all entries<br>6.9% of meaningful</div>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:66%;"></div></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Monthly trend:</div>
+        <div class="mini-trend">
+          <div class="mini-bar-col"><div class="mini-bar-val">3</div><div class="mini-bar" style="height:8px;"></div><div class="mini-bar-label">Jan</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">9</div><div class="mini-bar" style="height:18px;"></div><div class="mini-bar-label">Feb</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">13</div><div class="mini-bar" style="height:26px;background:#F20C1A;"></div><div class="mini-bar-label">Mar</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">4</div><div class="mini-bar" style="height:10px;"></div><div class="mini-bar-label">Apr*</div></div>
+        </div>
+        <div class="verbatim">"The quality of meat has declined significantly. Salads old."</div>
+        <div class="verbatim">"The sweet potatoes were off, this week the mint leaves were black and welted and the cucumber was soft. Also the lamb was very fatty."</div>
+        <div class="verbatim">"The ingredients are often very poor quality. We often throw away some of the items especially when it contains a side 'salad'."</div>
+        <div style="margin-top:14px;font-size:0.8rem;color:var(--text-muted);"><strong>Key insight:</strong> Mentions of quality decline cluster around produce freshness (greens, herbs, salad components) and protein portion quality. This is especially damaging because UCOOK's core value proposition is quality ingredients.</div>
+      </div>
+
+    </div><!-- /pain-grid (dominant) -->
+
+    <!-- MODERATE PAIN POINTS -->
+    <h3 style="margin-top:36px;margin-bottom:12px;">Moderate Pain Points</h3>
+    <div class="pain-grid">
+
+      <!-- APP/TECH -->
+      <div class="pain-card moderate">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">App &amp; Website Tech Issues</div>
+            <div style="margin-top:6px;"><span class="tag tag-moderate">Moderate</span> <span class="tag tag-growing">Spiked in March ↑</span></div>
+          </div>
+          <div><div class="pain-count">15</div><div class="pain-pct">2.3%</div></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:34%;background:var(--uc-blue-mid);"></div></div>
+        <div class="mini-trend" style="height:28px;">
+          <div class="mini-bar-col"><div class="mini-bar-val">2</div><div class="mini-bar" style="height:8px;background:var(--uc-blue-mid);"></div><div class="mini-bar-label">Jan</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">3</div><div class="mini-bar" style="height:10px;background:var(--uc-blue-mid);"></div><div class="mini-bar-label">Feb</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">9</div><div class="mini-bar" style="height:28px;background:#F20C1A;"></div><div class="mini-bar-label">Mar</div></div>
+          <div class="mini-bar-col"><div class="mini-bar-val">1</div><div class="mini-bar" style="height:4px;background:var(--uc-blue-mid);"></div><div class="mini-bar-label">Apr*</div></div>
+        </div>
+        <div class="verbatim">"I'm not able to make changes on your app to my credit card details. I've requested help 4 times. No one is assisting. I'm paying decline fees."</div>
+        <div class="verbatim">"The website is still faulty, making one unable to add products to cart, asking one to sign in again and then freezing at Step 3."</div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;"><strong>Key issues:</strong> Payment details update failing, address update failing, website cart freezing, app refusing to load. The March spike suggests a platform event or deployment issue.</p>
+      </div>
+
+      <!-- CUSTOMER SUPPORT -->
+      <div class="pain-card moderate">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Customer Support Failures</div>
+            <div style="margin-top:6px;"><span class="tag tag-moderate">Moderate</span> <span class="tag tag-critical">High Churn Intent</span></div>
+          </div>
+          <div><div class="pain-count">13</div><div class="pain-pct">2.0%</div></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--uc-blue-mid);"></div></div>
+        <div class="verbatim">"Your support sucks. I have been sending NUMEROUS mails with no response — not even a read receipt. You should be ashamed."</div>
+        <div class="verbatim">"I have written to you and have no feedback. What is worse is you have ignored my request not to ever get certain dishes. You obviously don't care about your clients."</div>
+        <div class="verbatim">"Delivery is shocking. Support is shocking. I can't anymore, I'm done."</div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;"><strong>Key insight:</strong> Small volume but <strong>highest churn language</strong>. Almost every support complaint includes a stated intention to leave permanently. These customers need urgent rescue intervention.</p>
+      </div>
+
+      <!-- PORTION SIZE -->
+      <div class="pain-card moderate">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Portion Size Concerns</div>
+            <div style="margin-top:6px;"><span class="tag tag-moderate">Moderate</span> <span class="tag tag-niche">Stable</span></div>
+          </div>
+          <div><div class="pain-count">12</div><div class="pain-pct">1.8%</div></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:27%;background:var(--uc-blue-mid);"></div></div>
+        <div class="verbatim">"Some of the portions are too small for my family. A grown man and teenage sons can't live off 150g protein. I am willing to pay more to have bigger portions."</div>
+        <div class="verbatim">"Portion sizes got smaller. Discount on boxes returned and maybe a discount on your 5th order."</div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;"><strong>Split direction:</strong> Most complaints are about portions being <em>too small</em> (especially for larger families). A couple cite portions too big. Primarily affects the 2-person box for families of 3–4.</p>
+      </div>
+
+      <!-- WRONG/MISSING INGREDIENTS -->
+      <div class="pain-card moderate">
+        <div class="pain-header">
+          <div>
+            <div class="pain-title">Wrong or Missing Ingredients</div>
+            <div style="margin-top:6px;"><span class="tag tag-moderate">Moderate</span></div>
+          </div>
+          <div><div class="pain-count">11</div><div class="pain-pct">1.7%</div></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--uc-blue-mid);"></div></div>
+        <div class="verbatim">"Both meals were not described correctly. We received 300g mince instead of 450g and 2 tortilla wraps instead of 3."</div>
+        <div class="verbatim">"Been weeks of orders where ingredients have been missing. Too unreliable."</div>
+        <div class="verbatim">"I haven't received my box yet. Had to make last minute plans to feed the family."</div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;"><strong>Key insight:</strong> Fulfillment accuracy issues directly undermine UCOOK's core promise. Any recurrence of missing/wrong items causes immediate pause or cancellation.</p>
+      </div>
+
+    </div><!-- /moderate pain-grid -->
+
+    <!-- NICHE PAIN POINTS -->
+    <h3 style="margin-top:36px;margin-bottom:12px;">Niche but Specific Pain Points</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <div class="pain-card niche" style="border-left:4px solid var(--uc-green);">
+        <div class="pain-title">Discovery / Vitality Integration</div>
+        <span class="tag tag-niche" style="margin:8px 0;display:inline-block;">6 entries</span>
+        <div class="verbatim">"No uCook vouchers available via Discovery Vitality making the weekly meals unaffordable for me."</div>
+        <div class="verbatim">"I've subscribed to Ucook to get the vitality benefit. Only to find out that my ID number wasn't linked since 26 June."</div>
+        <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;">Specifically driven by Discovery benefit — affecting health-conscious subscribers who rely on the subsidy to afford UCOOK.</p>
+      </div>
+      <div class="pain-card niche" style="border-left:4px solid var(--uc-green);">
+        <div class="pain-title">Packaging &amp; Sustainability</div>
+        <span class="tag tag-niche" style="margin:8px 0;display:inline-block;">5 entries</span>
+        <div class="verbatim">"Too much plastic packaging that is non-recyclable."</div>
+        <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;">Small but principled pauses. Customers who pause for sustainability reasons are environmentally engaged and may be permanently lost without packaging improvements.</p>
+      </div>
+      <div class="pain-card niche" style="border-left:4px solid var(--uc-green);">
+        <div class="pain-title">Delivery Coverage Gaps</div>
+        <span class="tag tag-niche" style="margin:8px 0;display:inline-block;">5 entries</span>
+        <div class="verbatim">"You don't deliver to Simbithi Eco Estate KZN."</div>
+        <div class="verbatim">"The SECOND you decide to deliver to Kenton on Sea, I will be there like a bear."</div>
+        <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;">Customers actively wanting to order but unable due to area restrictions — trapped demand.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TRENDING SECTION -->
+<div style="background:var(--white);padding:0 48px;">
+<div class="container">
+  <div class="section">
+    <div class="section-label">Month-over-Month Analysis</div>
+    <h2>Newly Increasing Pain Points</h2>
+    <p class="section-intro">Measuring growth from January to March 2026 (April is partial month, ~42% through).</p>
+
+    <table class="trend-table">
+      <thead>
+        <tr>
+          <th>Pain Point</th>
+          <th class="num">Jan</th>
+          <th class="num">Feb</th>
+          <th class="num">Mar</th>
+          <th class="num">Apr*</th>
+          <th>Jan → Mar Growth</th>
+          <th>Signal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>App &amp; Website Tech Issues</strong></td>
+          <td class="num">2</td>
+          <td class="num">3</td>
+          <td class="num" style="color:var(--uc-red);font-weight:900;">9</td>
+          <td class="num">1</td>
+          <td><span class="growth-pill growth-high">+350%</span></td>
+          <td><span class="trend-arrow arrow-up">↑↑</span> March spike — likely a platform event</td>
+        </tr>
+        <tr>
+          <td><strong>Menu &amp; Dietary Preferences</strong></td>
+          <td class="num">3</td>
+          <td class="num">12</td>
+          <td class="num" style="color:var(--uc-red);font-weight:900;">17</td>
+          <td class="num">5</td>
+          <td><span class="growth-pill growth-high">+467%</span></td>
+          <td><span class="trend-arrow arrow-up">↑↑</span> Sustained growth — menu fatigue emerging</td>
+        </tr>
+        <tr>
+          <td><strong>Pricing &amp; Affordability</strong></td>
+          <td class="num">4</td>
+          <td class="num">12</td>
+          <td class="num" style="color:var(--uc-red);font-weight:900;">22</td>
+          <td class="num">6</td>
+          <td><span class="growth-pill growth-high">+450%</span></td>
+          <td><span class="trend-arrow arrow-up">↑↑</span> Post-holiday squeeze; macro pressure</td>
+        </tr>
+        <tr>
+          <td><strong>Product Quality</strong></td>
+          <td class="num">3</td>
+          <td class="num">9</td>
+          <td class="num" style="color:#C45000;font-weight:900;">13</td>
+          <td class="num">4</td>
+          <td><span class="growth-pill growth-high">+333%</span></td>
+          <td><span class="trend-arrow arrow-up">↑</span> Consistent growth — ops/sourcing issue?</td>
+        </tr>
+        <tr>
+          <td><strong>Subscription Flexibility</strong></td>
+          <td class="num">5</td>
+          <td class="num">12</td>
+          <td class="num" style="color:#C45000;font-weight:900;">14</td>
+          <td class="num">7</td>
+          <td><span class="growth-pill growth-med">+180%</span></td>
+          <td><span class="trend-arrow arrow-up">↑</span> Growing demand for bi-weekly option</td>
+        </tr>
+        <tr>
+          <td><strong>Delivery Issues</strong></td>
+          <td class="num">7</td>
+          <td class="num">10</td>
+          <td class="num" style="color:#C45000;font-weight:900;">14</td>
+          <td class="num">5</td>
+          <td><span class="growth-pill growth-med">+100%</span></td>
+          <td><span class="trend-arrow arrow-up">↑</span> Delivery timing reliability worsening</td>
+        </tr>
+        <tr>
+          <td><strong>Discount / Voucher Issues</strong></td>
+          <td class="num">9</td>
+          <td class="num">13</td>
+          <td class="num">15</td>
+          <td class="num">4</td>
+          <td><span class="growth-pill growth-low">+67%</span></td>
+          <td><span class="trend-arrow arrow-same">→</span> High baseline; consistent pain</td>
+        </tr>
+        <tr>
+          <td><strong>Customer Support</strong></td>
+          <td class="num">2</td>
+          <td class="num">5</td>
+          <td class="num">4</td>
+          <td class="num">2</td>
+          <td><span class="growth-pill growth-stable">+100%</span></td>
+          <td><span class="trend-arrow arrow-same">→</span> Low volume, high severity per entry</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- QUICK WINS -->
+<div style="background:var(--surface);padding:0 48px;">
+<div class="container">
+  <div class="section">
+    <div class="section-label">Recommended Actions</div>
+    <h2>Quick Wins — High Impact, Low Complexity</h2>
+    <p class="section-intro">These are fixes or features where customer demand is explicitly and repeatedly stated, and where the implementation complexity is relatively low compared to the retention upside.</p>
+
+    <div class="qw-grid">
+
+      <div class="qw-card">
+        <div class="qw-number">1</div>
+        <div class="qw-title">Auto-Apply Discount Codes from Email Links</div>
+        <div class="qw-body">
+          Multiple customers explicitly name manual copy-paste of codes as a frustration. When a discount is emailed, the link should pre-populate and apply the code in checkout automatically. This eliminates the #1 frustration in the voucher journey.
+          <div class="verbatim" style="margin-top:10px;">"Discounts should not be a game that requires me to manually copy / paste and apply it… I won't be coming back."</div>
+        </div>
+        <div class="qw-impact">
+          <div class="impact-dot" style="background:var(--uc-red);"></div>
+          Addresses 41 pause entries · High churn language · Affects reactivation &amp; welcome flows
+        </div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-number">2</div>
+        <div class="qw-title">Introduce a Bi-Weekly Subscription Cadence</div>
+        <div class="qw-body">
+          A significant segment of customers love UCOOK but are pausing weekly to manage cost or preference. A fortnightly subscription plan would retain these customers who currently have no option but to pause and re-activate repeatedly — generating churn noise and bank decline fees.
+          <div class="verbatim" style="margin-top:10px;">"It would be amazing if possible to schedule automatically for every 2 or 3 weeks instead of every week."</div>
+        </div>
+        <div class="qw-impact">
+          <div class="impact-dot" style="background:var(--uc-gold);"></div>
+          Addresses 38 entries · Converts "price-sensitive loyalists" into retained subscribers
+        </div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-number">3</div>
+        <div class="qw-title">Delivery Time Window Selection (AM / PM)</div>
+        <div class="qw-body">
+          Multiple customers state they cannot receive Sunday or Monday delivery because they don't know in advance where they will be. Even a basic AM/PM preference toggle would significantly reduce delivery-related pauses. One customer suggested Pargo-style flexible pickup as an alternative.
+          <div class="verbatim" style="margin-top:10px;">"Even just AM or PM is helpful — I can't guarantee I'm in for delivery."</div>
+        </div>
+        <div class="qw-impact">
+          <div class="impact-dot" style="background:var(--uc-orange);"></div>
+          Addresses 36 delivery entries · Retention play for working customers &amp; parents
+        </div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-number">4</div>
+        <div class="qw-title">Fix Discovery Vitality ID Linking at Signup</div>
+        <div class="qw-body">
+          A subset of customers subscribed specifically for the Discovery Vitality benefit and found their ID was not linked — meaning they lost weeks of benefits. This is a known integration point that, if fixed at signup, would prevent a specific and very avoidable churn segment.
+          <div class="verbatim" style="margin-top:10px;">"I've subscribed to get the Vitality benefit. Only to find out my ID wasn't linked since 26 June."</div>
+        </div>
+        <div class="qw-impact">
+          <div class="impact-dot" style="background:var(--uc-blue-mid);"></div>
+          Addresses 6 entries but signals a wider integration gap · High-value subscriber segment
+        </div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-number">5</div>
+        <div class="qw-title">Increase Voucher Validity Windows &amp; Add Expiry Clarity</div>
+        <div class="qw-body">
+          Many pauses stem from discount codes expiring before customers can use them — especially when codes are sent at unusual times (early morning, holiday-adjacent periods). Extending validity from hours to 48–72 hours, and clearly communicating the expiry time in the email, would significantly reduce frustration.
+          <div class="verbatim" style="margin-top:10px;">"Received the mail at 08h49, added the code — then it says it has expired. The mail states expires 26 Nov at 09h00. Fix it please."</div>
+        </div>
+        <div class="qw-impact">
+          <div class="impact-dot" style="background:var(--uc-orange);"></div>
+          Low ops cost · High customer sentiment impact · Directly rescues lapsed-customer flow
+        </div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-number">6</div>
+        <div class="qw-title">Add a Family-Friendly Meal Category</div>
+        <div class="qw-body">
+          Multiple parents cite that UCOOK meals don't suit children — flavours are too complex, proteins too small for growing families, and cooking two separate meals per night is unsustainable. A simple "Family Friendly" meal filter or category would address a repeating segment that loves the service but can't make it work for their household.
+          <div class="verbatim" style="margin-top:10px;">"It would be amazing if you could add a family friendly meal category so the kids can also eat with us."</div>
+        </div>
+        <div class="qw-impact">
+          <div class="impact-dot" style="background:var(--uc-gold);"></div>
+          Addresses menu + portion feedback · Expands addressable household segment
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SUMMARY TABLE -->
+<div style="background:var(--white);padding:0 48px;">
+<div class="container">
+  <div class="section">
+    <div class="section-label">At a Glance</div>
+    <h2>Full Pain Point Summary</h2>
+
+    <table class="trend-table" style="margin-top:16px;">
+      <thead>
+        <tr>
+          <th>Pain Point</th>
+          <th class="num">Count</th>
+          <th class="num">% Total</th>
+          <th>Priority</th>
+          <th>Trend</th>
+          <th>Quick Win?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Pricing &amp; Affordability</strong></td><td class="num">44</td><td class="num">6.7%</td><td><span class="tag tag-critical">Critical</span></td><td><span class="trend-arrow arrow-up">↑ Growing</span></td><td>Bi-weekly plan (QW #2)</td></tr>
+        <tr><td><strong>Discount / Voucher Issues</strong></td><td class="num">41</td><td class="num">6.2%</td><td><span class="tag tag-critical">Critical</span></td><td><span class="trend-arrow arrow-same">→ Consistent</span></td><td>Auto-apply (QW #1), Validity (QW #5)</td></tr>
+        <tr><td><strong>Menu &amp; Dietary Preferences</strong></td><td class="num">37</td><td class="num">5.6%</td><td><span class="tag tag-growing">Growing</span></td><td><span class="trend-arrow arrow-up">↑↑ Fast growth</span></td><td>Family meals (QW #6)</td></tr>
+        <tr><td><strong>Subscription Flexibility</strong></td><td class="num">38</td><td class="num">5.7%</td><td><span class="tag tag-high">High</span></td><td><span class="trend-arrow arrow-up">↑ Growing</span></td><td>Bi-weekly plan (QW #2)</td></tr>
+        <tr><td><strong>Delivery Issues</strong></td><td class="num">36</td><td class="num">5.4%</td><td><span class="tag tag-critical">Critical</span></td><td><span class="trend-arrow arrow-up">↑ Growing</span></td><td>AM/PM window (QW #3)</td></tr>
+        <tr><td><strong>Product Quality</strong></td><td class="num">29</td><td class="num">4.4%</td><td><span class="tag tag-high">High</span></td><td><span class="trend-arrow arrow-up">↑ Growing</span></td><td>Ops/sourcing review needed</td></tr>
+        <tr><td><strong>App / Website Tech Issues</strong></td><td class="num">15</td><td class="num">2.3%</td><td><span class="tag tag-moderate">Moderate</span></td><td><span class="trend-arrow arrow-up">↑ March spike</span></td><td>Platform bug fix</td></tr>
+        <tr><td><strong>Customer Support Failures</strong></td><td class="num">13</td><td class="num">2.0%</td><td><span class="tag tag-critical">Critical*</span></td><td><span class="trend-arrow arrow-same">→ Low but severe</span></td><td>SLA enforcement, escalation queue</td></tr>
+        <tr><td><strong>Portion Size Concerns</strong></td><td class="num">12</td><td class="num">1.8%</td><td><span class="tag tag-moderate">Moderate</span></td><td><span class="trend-arrow arrow-same">→ Stable</span></td><td>Larger protein option upsell</td></tr>
+        <tr><td><strong>Wrong / Missing Ingredients</strong></td><td class="num">11</td><td class="num">1.7%</td><td><span class="tag tag-moderate">Moderate</span></td><td><span class="trend-arrow arrow-same">→ Stable</span></td><td>Fulfillment QA improvement</td></tr>
+        <tr><td><strong>Discovery / Vitality Integration</strong></td><td class="num">6</td><td class="num">0.9%</td><td><span class="tag tag-niche">Niche</span></td><td><span class="trend-arrow arrow-same">→ Stable</span></td><td>ID linking fix (QW #4)</td></tr>
+        <tr><td><strong>Packaging / Sustainability</strong></td><td class="num">5</td><td class="num">0.8%</td><td><span class="tag tag-niche">Niche</span></td><td><span class="trend-arrow arrow-same">→ Stable</span></td><td>Recyclable packaging roadmap</td></tr>
+        <tr><td><strong>Delivery Area Coverage</strong></td><td class="num">5</td><td class="num">0.8%</td><td><span class="tag tag-niche">Niche</span></td><td><span class="trend-arrow arrow-same">→ Stable</span></td><td>Expansion / Pargo partnership</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:10px;">* Customer Support marked Critical due to explicit and repeated permanent-churn language, despite low volume.</p>
+  </div>
+</div>
+</div>
+
+<div class="footer">
+  UCOOK · Customer Journey Analysis · Pause Reasons Report · April 2026<br>
+  Dataset: Pause Reasons.csv · 661 entries · Jan 15 – Apr 13, 2026 · All entries tagged "Other" (free-text)
+</div>
+
+</body>
+</html>
