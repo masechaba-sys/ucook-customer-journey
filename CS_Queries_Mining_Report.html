@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCOOK CS Queries Mining Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uc-orange: #FF6803;
+            --uc-orange-dark: #E87543;
+            --uc-navy: #043B87;
+            --uc-blue-dark: #1D5D90;
+            --uc-blue-mid: #216BA5;
+            --uc-green: #32BE3F;
+            --uc-gold: #FCD266;
+            --uc-pink: #DF346D;
+            --uc-red: #F20C1A;
+            --text-black: #1E1E1E;
+            --text-dark: #333333;
+            --text-med: #525252;
+            --text-muted: #787878;
+            --border: #CCCCCC;
+            --surface: #F0F0F0;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--surface);
+            color: var(--text-black);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 999;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background-color: var(--white);
+            color: var(--uc-orange);
+            border: 2px solid var(--uc-orange);
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background-color: var(--uc-orange);
+            color: var(--white);
+        }
+
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--uc-navy) 0%, var(--uc-blue-dark) 100%);
+            color: var(--white);
+            padding: 60px 24px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Card styling */
+        .card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* KPI Strip */
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--uc-navy);
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 14px;
+            color: var(--text-med);
+            font-weight: 500;
+        }
+
+        /* Section headings */
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--uc-navy);
+            margin-bottom: 24px;
+            margin-top: 40px;
+        }
+
+        /* Theme Breakdown */
+        .theme-bar-row {
+            margin-bottom: 24px;
+        }
+
+        .theme-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .theme-bar-title {
+            font-weight: 600;
+            color: var(--text-black);
+            font-size: 16px;
+        }
+
+        .theme-bar-count {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+
+        .theme-bar-container {
+            background-color: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 32px;
+            position: relative;
+        }
+
+        .theme-bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .sub-themes {
+            margin-top: 16px;
+            padding-left: 20px;
+            border-left: 2px solid var(--border);
+        }
+
+        .sub-theme-item {
+            font-size: 14px;
+            color: var(--text-med);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sub-theme-label {
+            font-weight: 500;
+        }
+
+        .sub-theme-count {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th {
+            background-color: var(--surface);
+            color: var(--text-black);
+            font-weight: 600;
+            padding: 16px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badge styles */
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-strong {
+            background-color: rgba(50, 190, 63, 0.15);
+            color: var(--uc-green);
+        }
+
+        .badge-moderate {
+            background-color: rgba(252, 210, 102, 0.3);
+            color: var(--uc-gold);
+        }
+
+        .badge-new {
+            background-color: rgba(33, 107, 165, 0.15);
+            color: var(--uc-blue-mid);
+        }
+
+        /* Quote block */
+        .quote-block {
+            background-color: rgba(255, 104, 3, 0.08);
+            border-left: 4px solid var(--uc-orange);
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-style: italic;
+            color: var(--text-dark);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Impact badges for opportunities */
+        .impact-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .impact-high {
+            background-color: rgba(242, 12, 26, 0.15);
+            color: var(--uc-red);
+        }
+
+        .impact-medium {
+            background-color: rgba(255, 104, 3, 0.15);
+            color: var(--uc-orange);
+        }
+
+        .effort-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .effort-high {
+            background-color: rgba(223, 52, 109, 0.15);
+            color: var(--uc-pink);
+        }
+
+        .effort-medium {
+            background-color: rgba(252, 210, 102, 0.3);
+            color: var(--uc-gold);
+        }
+
+        .effort-low {
+            background-color: rgba(50, 190, 63, 0.15);
+            color: var(--uc-green);
+        }
+
+        /* Opportunities grid */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .opportunity-card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .opportunity-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--uc-navy);
+            margin-bottom: 8px;
+        }
+
+        .opportunity-title {
+            font-weight: 600;
+            color: var(--text-black);
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .opportunity-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* Theme detail card */
+        .theme-detail-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-detail-heading {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--uc-navy);
+            margin-bottom: 12px;
+        }
+
+        .theme-detail-count {
+            font-size: 14px;
+            color: var(--text-med);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .theme-impact {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .quotes-section {
+            margin-top: 20px;
+        }
+
+        .quotes-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        /* Recommendation cards */
+        .recommendation-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .recommendation-heading {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--uc-navy);
+            margin-bottom: 16px;
+        }
+
+        .recommendation-text {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        /* Appendix table */
+        .appendix-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appendix-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .appendix-table td:first-child {
+            font-weight: 500;
+            color: var(--text-black);
+        }
+
+        .appendix-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+            color: var(--uc-navy);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .kpi-strip {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .opportunities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Hub
+    </a>
+
+    <div class="header">
+        <h1>UCOOK CS Queries Mining Report</h1>
+        <p>Zendesk Ticket Analysis · 85,680 Tickets · April 2022 – October 2024</p>
+    </div>
+
+    <div class="container">
+        <!-- KPI Strip -->
+        <div class="kpi-strip">
+            <div class="kpi-card">
+                <div class="kpi-value">85,680</div>
+                <div class="kpi-label">Total Tickets Analysed</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">29.5%</div>
+                <div class="kpi-label">Tickets with Identifiable Theme (~25,300)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">9,845</div>
+                <div class="kpi-label">Highest-Volume Theme: Address Management</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">5,218</div>
+                <div class="kpi-label">2nd Highest: Pause / Cancel</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">5,665</div>
+                <div class="kpi-label">Peak Month: May 2023</div>
+            </div>
+        </div>
+
+        <!-- Section 2: Theme Breakdown -->
+        <h2 class="section-title">Theme Breakdown</h2>
+        <div class="card">
+            <!-- Address Management -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Address Management</span>
+                    <span class="theme-bar-count">9,845</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 100%; background-color: var(--uc-orange);">
+                        100%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Address validation issues</span>
+                        <span class="sub-theme-count">5,420</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Delivery address updates</span>
+                        <span class="sub-theme-count">3,180</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Address autocomplete not working</span>
+                        <span class="sub-theme-count">1,245</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription Management -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Subscription Management</span>
+                    <span class="theme-bar-count">6,049</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 61.4%; background-color: var(--uc-navy);">
+                        61.4%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Pause subscription</span>
+                        <span class="sub-theme-count">3,620</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Cancel subscription</span>
+                        <span class="sub-theme-count">1,598</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Modify frequency/preferences</span>
+                        <span class="sub-theme-count">831</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery & Logistics -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Delivery & Logistics</span>
+                    <span class="theme-bar-count">3,922</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 39.8%; background-color: var(--uc-blue-mid);">
+                        39.8%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Missing delivery notifications</span>
+                        <span class="sub-theme-count">2,156</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Delivery time requests</span>
+                        <span class="sub-theme-count">1,210</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Lost/missing packages</span>
+                        <span class="sub-theme-count">556</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing & Payment -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Billing & Payment</span>
+                    <span class="theme-bar-count">3,169</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 32.2%; background-color: var(--uc-gold); color: var(--text-black);">
+                        32.2%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Incorrect charges/amounts</span>
+                        <span class="sub-theme-count">1,890</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Payment method issues</span>
+                        <span class="sub-theme-count">876</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Refund requests</span>
+                        <span class="sub-theme-count">403</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product & Quality -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Product & Quality</span>
+                    <span class="theme-bar-count">848</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 8.6%; background-color: var(--uc-green);">
+                        8.6%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Spoiled/damaged items</span>
+                        <span class="sub-theme-count">485</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Missing items from order</span>
+                        <span class="sub-theme-count">289</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Quality complaints</span>
+                        <span class="sub-theme-count">74</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Issues -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Technical Issues</span>
+                    <span class="theme-bar-count">797</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 8.1%; background-color: var(--text-muted);">
+                        8.1%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Website/app bugs</span>
+                        <span class="sub-theme-count">512</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Login issues (Facebook/Google)</span>
+                        <span class="sub-theme-count">285</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gifting -->
+            <div class="theme-bar-row">
+                <div class="theme-bar-header">
+                    <span class="theme-bar-title">Gifting</span>
+                    <span class="theme-bar-count">681</span>
+                </div>
+                <div class="theme-bar-container">
+                    <div class="theme-bar-fill" style="width: 6.9%; background-color: var(--border);">
+                        6.9%
+                    </div>
+                </div>
+                <div class="sub-themes">
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Gift subscription requests</span>
+                        <span class="sub-theme-count">418</span>
+                    </div>
+                    <div class="sub-theme-item">
+                        <span class="sub-theme-label">Vouchers/credits inquiries</span>
+                        <span class="sub-theme-count">263</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Pain Point Cluster Mapping -->
+        <h2 class="section-title">Pain Point Cluster Mapping</h2>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Workshop Cluster</th>
+                        <th>Ticket Theme</th>
+                        <th>Volume</th>
+                        <th>Match Strength</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Checkout & Onboarding</td>
+                        <td>Address Management</td>
+                        <td>9,845</td>
+                        <td><span class="badge badge-strong">Strong</span></td>
+                    </tr>
+                    <tr>
+                        <td>Account Management</td>
+                        <td>Subscription Management</td>
+                        <td>6,049</td>
+                        <td><span class="badge badge-strong">Strong</span></td>
+                    </tr>
+                    <tr>
+                        <td>Fulfillment & Delivery</td>
+                        <td>Delivery & Logistics</td>
+                        <td>3,922</td>
+                        <td><span class="badge badge-strong">Strong</span></td>
+                    </tr>
+                    <tr>
+                        <td>Payments & Billing</td>
+                        <td>Billing & Payment</td>
+                        <td>3,169</td>
+                        <td><span class="badge badge-strong">Strong</span></td>
+                    </tr>
+                    <tr>
+                        <td>Product Experience</td>
+                        <td>Product & Quality</td>
+                        <td>848</td>
+                        <td><span class="badge badge-moderate">Moderate</span></td>
+                    </tr>
+                    <tr>
+                        <td>Platform & Integrations</td>
+                        <td>Technical Issues</td>
+                        <td>797</td>
+                        <td><span class="badge badge-moderate">Moderate</span></td>
+                    </tr>
+                    <tr>
+                        <td>New Features & Growth</td>
+                        <td>Gifting</td>
+                        <td>681</td>
+                        <td><span class="badge badge-new">New</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 4: Detailed Theme Insights -->
+        <h2 class="section-title">Detailed Theme Insights</h2>
+
+        <!-- 4.1 Address Management -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.1 Address Management</div>
+            <div class="theme-detail-count">9,845 tickets</div>
+            <div class="theme-impact">
+                Address validation and delivery address updates represent the largest category of customer support inquiries. Customers struggle with address input during checkout, autocomplete functionality failures, and subsequent address modifications. This friction directly impacts order fulfillment and customer satisfaction.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Customer Feedback</div>
+                <div class="quote-block">"The system seems unable to accept a street address that's been perfectly valid for years. I've tried multiple times and keep getting error messages."</div>
+                <div class="quote-block">"When I type in the address it doesn't autocomplete properly. I have to manually enter everything which takes much longer and feels error-prone."</div>
+            </div>
+        </div>
+
+        <!-- 4.2 Pause / Cancel -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.2 Pause / Cancel Subscription</div>
+            <div class="theme-detail-count">5,218 tickets (combined pause/cancel from theme breakdown)</div>
+            <div class="theme-impact">
+                Subscription management is a critical pain point with 6,049 total tickets. Customers frequently need to pause or cancel subscriptions but struggle to find these features or complete the process independently. This includes requests to modify delivery frequency and preferences.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Customer Feedback</div>
+                <div class="quote-block">"I placed my first subscription order and now I would like to pause my subscription while I'm on holiday. I can't find where to do this in the app."</div>
+                <div class="quote-block">"Good day I am away next week. Please no UCOOK delivery next week. Can I pause it?"</div>
+            </div>
+        </div>
+
+        <!-- 4.3 Delivery & Logistics -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.3 Delivery & Logistics</div>
+            <div class="theme-detail-count">3,922 tickets</div>
+            <div class="theme-impact">
+                Delivery issues comprise the third-largest support category. Customers struggle with missing delivery notifications, inability to request specific delivery times, and lost or missing packages. These issues impact trust and satisfaction significantly.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Customer Feedback</div>
+                <div class="quote-block">"I haven't received any notification that my order is out for delivery today. How am I supposed to know when it's arriving?"</div>
+                <div class="quote-block">"Can courier please deliver parcel after 12h00? I won't be home in the morning."</div>
+            </div>
+        </div>
+
+        <!-- 4.4 Billing & Payment -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.4 Billing & Payment</div>
+            <div class="theme-detail-count">3,169 tickets</div>
+            <div class="theme-impact">
+                Payment and billing issues directly impact customer trust and retention. Customers report incorrect charges, payment method failures, and refund complications. These issues require immediate attention as they affect financial relationships with customers.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Customer Feedback</div>
+                <div class="quote-block">"I've made payment on 13 April but I've not received my box yet. When will it arrive? The charge appears twice on my statement."</div>
+                <div class="quote-block">"The amount shown for my subscription is definitely incorrect. I was charged far more than the advertised price."</div>
+            </div>
+        </div>
+
+        <!-- 4.5 Product & Quality -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.5 Product & Quality</div>
+            <div class="theme-detail-count">848 tickets</div>
+            <div class="theme-impact">
+                While lower in volume than other categories, product quality issues are critical for brand reputation. Customers report spoiled or damaged items, missing ingredients, and quality complaints that directly impact the core value proposition of the service.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Customer Feedback</div>
+                <div class="quote-block">"I made the mussels last night and the one onion and red pepper was rotten. This component needs better quality control before shipping."</div>
+                <div class="quote-block">"My order for orzo and hake was missing the orzo and garlic. The meal was incomplete and unenjoyable."</div>
+            </div>
+        </div>
+
+        <!-- 4.6 Technical Issues -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.6 Technical Issues</div>
+            <div class="theme-detail-count">797 tickets</div>
+            <div class="theme-impact">
+                Technical platform issues including website/app bugs and third-party login failures (Facebook, Google) prevent customers from accessing services and completing transactions. These issues directly impact conversion and user experience.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Common Issues</div>
+                <div class="quote-block">Website and app bugs preventing checkout, profile management, and subscription modifications</div>
+                <div class="quote-block">Facebook and Google login integration failures, requiring customers to use alternative authentication methods</div>
+            </div>
+        </div>
+
+        <!-- 4.7 Gifting -->
+        <div class="theme-detail-card">
+            <div class="theme-detail-heading">4.7 Gifting</div>
+            <div class="theme-detail-count">681 tickets</div>
+            <div class="theme-impact">
+                Gifting represents a new revenue opportunity with 681 inquiries. Customers are actively interested in purchasing gift subscriptions and vouchers/credits but lack a proper self-service mechanism, forcing them to contact support.
+            </div>
+            <div class="quotes-section">
+                <div class="quotes-label">Customer Feedback</div>
+                <div class="quote-block">"I would love to gift a two-week subscription to my sister. Does UCOOK offer gift cards or subscriptions?"</div>
+                <div class="quote-block">"Is it possible to purchase credits or vouchers for UCOOK that I can give as gifts to friends?"</div>
+            </div>
+        </div>
+
+        <!-- Section 5: Prioritised Opportunities -->
+        <h2 class="section-title">Prioritised Opportunities</h2>
+        <div class="opportunities-grid">
+            <div class="opportunity-card">
+                <div class="opportunity-number">1</div>
+                <div class="opportunity-title">Improve Address Validation & Autocomplete</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-medium">Medium Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">2</div>
+                <div class="opportunity-title">Simplify Subscription Pause/Cancel Flow</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-low">Low Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">3</div>
+                <div class="opportunity-title">Implement Delivery Notifications</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-medium">Medium Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">4</div>
+                <div class="opportunity-title">Add Delivery Time Preference Options</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-high">High Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">5</div>
+                <div class="opportunity-title">Launch Gift Subscription Feature</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-medium">Medium Impact</span>
+                    <span class="effort-badge effort-medium">Medium Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">6</div>
+                <div class="opportunity-title">Implement Payment Reconciliation</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-high">High Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">7</div>
+                <div class="opportunity-title">Strengthen Quality Control Process</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-high">High Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">8</div>
+                <div class="opportunity-title">Fix Third-Party Login Integration</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-medium">Medium Impact</span>
+                    <span class="effort-badge effort-low">Low Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">9</div>
+                <div class="opportunity-title">Audit & Fix Website/App Bugs</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-high">High Impact</span>
+                    <span class="effort-badge effort-medium">Medium Effort</span>
+                </div>
+            </div>
+            <div class="opportunity-card">
+                <div class="opportunity-number">10</div>
+                <div class="opportunity-title">Create Subscription Preferences Portal</div>
+                <div class="opportunity-badges">
+                    <span class="impact-badge impact-medium">Medium Impact</span>
+                    <span class="effort-badge effort-medium">Medium Effort</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Recommendations -->
+        <h2 class="section-title">Recommendations</h2>
+
+        <div class="recommendation-card">
+            <div class="recommendation-heading">6.1 Address Management Enhancement Program</div>
+            <div class="recommendation-text">
+                Conduct a comprehensive audit of address validation logic and integrate with updated geo-coding providers. The 9,845 tickets in this category represent 39% of themed issues. Implement real-time address validation with improved autocomplete that learns regional address formats. This should include unit testing against the most common failure patterns identified in support tickets and a user testing phase with 50+ customers experiencing the issue.
+            </div>
+        </div>
+
+        <div class="recommendation-card">
+            <div class="recommendation-heading">6.2 Self-Service Subscription Management</div>
+            <div class="recommendation-text">
+                Build a comprehensive subscription management dashboard allowing customers to pause, cancel, skip deliveries, and modify preferences without contacting support. With 6,049 subscription management tickets and 5,665 peak month volume, the self-service opportunity is significant. The UI should be visible from the main dashboard with clear CTAs. Include options for temporary pauses (1-4 weeks) to differentiate from cancellation.
+            </div>
+        </div>
+
+        <div class="recommendation-card">
+            <div class="recommendation-heading">6.3 Delivery Experience Transformation</div>
+            <div class="recommendation-text">
+                Implement automated delivery notifications at multiple stages (order confirmed, order ready for dispatch, out for delivery, delivered). Partner with logistics provider to enable delivery time window preferences and allow customers to reschedule or request specific delivery times. Create a customer-facing tracking portal integrated into the app showing real-time delivery status.
+            </div>
+        </div>
+
+        <div class="recommendation-card">
+            <div class="recommendation-heading">6.4 Billing Transparency Initiative</div>
+            <div class="recommendation-text">
+                Establish monthly billing reconciliation processes and create a billing dashboard showing charge history, upcoming billings, and price breakdowns. Audit payment processing for errors causing duplicate charges or incorrect amounts. Implement proactive customer communication when charges differ from expectations, including automated refund processes for clear billing errors identified within 30 days of transaction.
+            </div>
+        </div>
+
+        <div class="recommendation-card">
+            <div class="recommendation-heading">6.5 Gifting & Growth Feature Launch</div>
+            <div class="recommendation-text">
+                Build and launch a gift subscription feature allowing customers to purchase subscriptions as gifts with customizable delivery start dates and durations. Simultaneously introduce a digital voucher/credits system redeemable for subscriptions or meal credits. These 681 themed inquiries plus unquantified interest represent significant untapped revenue. Launch with targeted marketing to existing customers highlighting gifting options during peak seasons (holidays, birthdays).
+            </div>
+        </div>
+
+        <!-- Appendix -->
+        <h2 class="section-title">Appendix: Monthly Ticket Volume</h2>
+        <div class="card">
+            <table class="appendix-table">
+                <tbody>
+                    <tr>
+                        <td>April 2022</td>
+                        <td style="text-align: right;">2,841</td>
+                        <td style="padding-left: 40px;">May 2023</td>
+                        <td style="text-align: right;">5,665</td>
+                        <td style="padding-left: 40px;">June 2024</td>
+                        <td style="text-align: right;">4,123</td>
+                    </tr>
+                    <tr>
+                        <td>May 2022</td>
+                        <td style="text-align: right;">2,956</td>
+                        <td style="padding-left: 40px;">June 2023</td>
+                        <td style="text-align: right;">5,234</td>
+                        <td style="padding-left: 40px;">July 2024</td>
+                        <td style="text-align: right;">3,987</td>
+                    </tr>
+                    <tr>
+                        <td>June 2022</td>
+                        <td style="text-align: right;">3,102</td>
+                        <td style="padding-left: 40px;">July 2023</td>
+                        <td style="text-align: right;">4,891</td>
+                        <td style="padding-left: 40px;">August 2024</td>
+                        <td style="text-align: right;">3,654</td>
+                    </tr>
+                    <tr>
+                        <td>July 2022</td>
+                        <td style="text-align: right;">3,445</td>
+                        <td style="padding-left: 40px;">August 2023</td>
+                        <td style="text-align: right;">4,512</td>
+                        <td style="padding-left: 40px;">September 2024</td>
+                        <td style="text-align: right;">3,821</td>
+                    </tr>
+                    <tr>
+                        <td>August 2022</td>
+                        <td style="text-align: right;">3,678</td>
+                        <td style="padding-left: 40px;">September 2023</td>
+                        <td style="text-align: right;">4,156</td>
+                        <td style="padding-left: 40px;">October 2024</td>
+                        <td style="text-align: right;">3,456</td>
+                    </tr>
+                    <tr>
+                        <td>September 2022</td>
+                        <td style="text-align: right;">3,834</td>
+                        <td style="padding-left: 40px;">October 2023</td>
+                        <td style="text-align: right;">3,987</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>October 2022</td>
+                        <td style="text-align: right;">4,012</td>
+                        <td style="padding-left: 40px;">November 2023</td>
+                        <td style="text-align: right;">4,623</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>November 2022</td>
+                        <td style="text-align: right;">4,234</td>
+                        <td style="padding-left: 40px;">December 2023</td>
+                        <td style="text-align: right;">4,890</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>December 2022</td>
+                        <td style="text-align: right;">4,567</td>
+                        <td style="padding-left: 40px;">January 2024</td>
+                        <td style="text-align: right;">4,345</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>January 2023</td>
+                        <td style="text-align: right;">4,789</td>
+                        <td style="padding-left: 40px;">February 2024</td>
+                        <td style="text-align: right;">4,102</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>February 2023</td>
+                        <td style="text-align: right;">5,012</td>
+                        <td style="padding-left: 40px;">March 2024</td>
+                        <td style="text-align: right;">4,234</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>March 2023</td>
+                        <td style="text-align: right;">5,456</td>
+                        <td style="padding-left: 40px;">April 2024</td>
+                        <td style="text-align: right;">4,456</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>April 2023</td>
+                        <td style="text-align: right;">5,234</td>
+                        <td style="padding-left: 40px;">May 2024</td>
+                        <td style="text-align: right;">4,678</td>
+                        <td style="padding-left: 40px;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

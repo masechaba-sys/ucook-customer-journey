@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans Page Path Exploration Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --uc-orange: #FF6803;
+            --uc-orange-dark: #E87543;
+            --uc-navy: #043B87;
+            --uc-blue-dark: #1D5D90;
+            --uc-blue-mid: #216BA5;
+            --uc-green: #32BE3F;
+            --uc-gold: #FCD266;
+            --uc-pink: #DF346D;
+            --uc-red: #F20C1A;
+            --text-black: #1E1E1E;
+            --text-dark: #333333;
+            --text-med: #525252;
+            --text-muted: #787878;
+            --border: #CCCCCC;
+            --surface: #F0F0F0;
+            --white: #FFFFFF;
+            --green-dark: #1e9e2a;
+            --green-darker: #157020;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--surface);
+            color: var(--text-black);
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        /* Fixed Back to Hub Button */
+        .back-button {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background-color: var(--white);
+            border: 2px solid var(--uc-orange);
+            color: var(--uc-orange);
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .back-button:hover {
+            background-color: var(--uc-orange);
+            color: var(--white);
+        }
+
+        .back-button svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-darker) 100%);
+            color: var(--white);
+            padding: 48px 24px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 48px 24px;
+        }
+
+        /* KPI Strip */
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+        }
+
+        .kpi-card.critical {
+            border-left: 4px solid var(--uc-red);
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--uc-navy);
+            margin-bottom: 4px;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .kpi-card.critical .kpi-value {
+            color: var(--uc-red);
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--uc-navy);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Funnel Visualization */
+        .funnel-container {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+        }
+
+        .funnel {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            color: var(--white);
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .funnel-step:hover {
+            transform: translateX(8px);
+        }
+
+        .funnel-step.step-1 {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            width: 100%;
+        }
+
+        .funnel-step.step-2 {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            width: 95%;
+        }
+
+        .funnel-step.step-3 {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            width: 85%;
+        }
+
+        .funnel-step.step-4 {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            width: 75%;
+        }
+
+        .funnel-step.step-5 {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            width: 25%;
+        }
+
+        .funnel-step.critical {
+            background: linear-gradient(135deg, #f20c1a 0%, #d00814 100%);
+            width: 25%;
+        }
+
+        .funnel-label {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .funnel-metric {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .funnel-metric-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .funnel-metric-percent {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .funnel-warning {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--uc-red);
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 24px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .funnel-warning .warning-emoji {
+            color: var(--uc-red);
+            margin-right: 8px;
+        }
+
+        /* Chart Table */
+        .chart-table {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 16px;
+        }
+
+        .chart-row:last-child {
+            border-bottom: none;
+        }
+
+        .chart-label {
+            min-width: 240px;
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .chart-label-badge {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        .chart-label-badge.red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .chart-bar-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-bar {
+            height: 24px;
+            background: linear-gradient(90deg, var(--uc-blue-mid) 0%, var(--uc-blue-dark) 100%);
+            border-radius: 4px;
+            min-width: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar:hover {
+            filter: brightness(1.1);
+        }
+
+        .chart-value {
+            min-width: 100px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--uc-navy);
+        }
+
+        /* Pain Points Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .pain-point-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--uc-orange);
+        }
+
+        .pain-point-number {
+            display: inline-block;
+            background-color: var(--uc-orange);
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .pain-point-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .pain-point-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Red Flags */
+        .red-flags {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+        }
+
+        .flag-tier {
+            margin-bottom: 28px;
+        }
+
+        .flag-tier:last-child {
+            margin-bottom: 0;
+        }
+
+        .flag-tier-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flag-item {
+            padding: 12px 0;
+            padding-left: 32px;
+            position: relative;
+            font-size: 14px;
+            color: var(--text-med);
+            line-height: 1.6;
+        }
+
+        .flag-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-med);
+        }
+
+        /* Wins Cards */
+        .win-card {
+            background: linear-gradient(135deg, rgba(50, 190, 63, 0.1) 0%, rgba(50, 190, 63, 0.05) 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border-left: 4px solid var(--uc-green);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .win-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--uc-navy);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .win-card p {
+            font-size: 14px;
+            color: var(--text-med);
+            line-height: 1.6;
+        }
+
+        /* Next Steps Table */
+        .next-steps-table {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .steps-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 1fr;
+            gap: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            align-items: start;
+        }
+
+        .steps-row:last-child {
+            border-bottom: none;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .priority-p0 {
+            background-color: #fee2e2;
+            color: var(--uc-red);
+        }
+
+        .priority-p1 {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .priority-p2 {
+            background-color: #dbeafe;
+            color: var(--uc-blue-dark);
+        }
+
+        .priority-p3 {
+            background-color: #e0e7ff;
+            color: var(--uc-navy);
+        }
+
+        .steps-action {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .steps-detail {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .kpi-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .funnel-step {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .chart-label {
+                min-width: 180px;
+            }
+
+            .steps-row {
+                grid-template-columns: 1fr;
+            }
+
+            .priority-badge {
+                width: 100%;
+            }
+        }
+
+        /* Utility */
+        .emoji {
+            font-size: 20px;
+            margin-right: 4px;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Hub Button -->
+    <a href="index.html" class="back-button">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to Hub
+    </a>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Plans Page Path Exploration Report</h1>
+        <p>GA4 Path Exploration · New Users · 17 Mar 2026 – 13 Apr 2026 (28 days)</p>
+    </div>
+
+    <div class="container">
+        <!-- KPI Strip -->
+        <div class="kpi-strip">
+            <div class="kpi-card">
+                <div class="kpi-value">10,472</div>
+                <div class="kpi-label">New Users on Plans</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">567</div>
+                <div class="kpi-label">Sign-Ups (5.4%)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">402</div>
+                <div class="kpi-label">Reached AddAddress (70.9%)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">308</div>
+                <div class="kpi-label">Reached PlanSelection (76.6%)</div>
+            </div>
+            <div class="kpi-card critical">
+                <div class="kpi-value">85</div>
+                <div class="kpi-label">Reached Confirmation</div>
+            </div>
+            <div class="kpi-card critical">
+                <div class="kpi-value">0.81%</div>
+                <div class="kpi-label">Effective Confirmation Rate</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Checkout Funnel -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">🔀</span>
+                Checkout Funnel Breakdown
+            </h2>
+            <div class="funnel-container">
+                <div class="funnel">
+                    <div class="funnel-step step-1">
+                        <div class="funnel-label">Plans Landing</div>
+                        <div class="funnel-metric">
+                            <div class="funnel-metric-value">10,472</div>
+                            <div class="funnel-metric-percent">100%</div>
+                        </div>
+                    </div>
+
+                    <div class="funnel-step step-2">
+                        <div class="funnel-label">sign_up Event</div>
+                        <div class="funnel-metric">
+                            <div class="funnel-metric-value">567</div>
+                            <div class="funnel-metric-percent">5.4%</div>
+                        </div>
+                    </div>
+
+                    <div class="funnel-step step-3">
+                        <div class="funnel-label">CheckoutFlow-AddAddress</div>
+                        <div class="funnel-metric">
+                            <div class="funnel-metric-value">402</div>
+                            <div class="funnel-metric-percent">70.9% of sign-ups</div>
+                        </div>
+                    </div>
+
+                    <div class="funnel-step step-4">
+                        <div class="funnel-label">CheckoutFlow-PlanSelection</div>
+                        <div class="funnel-metric">
+                            <div class="funnel-metric-value">308</div>
+                            <div class="funnel-metric-percent">76.6% of AddAddress</div>
+                        </div>
+                    </div>
+
+                    <div class="funnel-step critical">
+                        <div class="funnel-label">CheckoutFlow-Confirmation</div>
+                        <div class="funnel-metric">
+                            <div class="funnel-metric-value">85</div>
+                            <div class="funnel-metric-percent">27.6% of PlanSelection</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="funnel-warning">
+                    <span class="warning-emoji">🔴</span>
+                    <strong>72.4% abandonment — Highest-priority fix</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Where Users Come From -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">📍</span>
+                Where Users Come From (End at Plans)
+            </h2>
+            <div class="chart-table">
+                <div class="chart-row">
+                    <div class="chart-label">/ (Homepage)</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 100%;"></div>
+                    </div>
+                    <div class="chart-value">2,387</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/meal-kit (Overview)</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 81%;"></div>
+                    </div>
+                    <div class="chart-value">1,930</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/cms/your-life-made-e…</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 41%;"></div>
+                    </div>
+                    <div class="chart-value">976</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/cms/deals</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 15%;"></div>
+                    </div>
+                    <div class="chart-value">357</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/meal-kit/ (trailing slash)</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 12%;"></div>
+                    </div>
+                    <div class="chart-value">285</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/cms/dinner-made-eas…</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 10%;"></div>
+                    </div>
+                    <div class="chart-value">242</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">(not set)
+                        <span class="chart-label-badge">Dark/Direct</span>
+                    </div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 8%;"></div>
+                    </div>
+                    <div class="chart-value">180</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/frozen</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 6%;"></div>
+                    </div>
+                    <div class="chart-value">148</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/me/subscriptions
+                        <span class="chart-label-badge red">Churn Signal</span>
+                    </div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 5%;"></div>
+                    </div>
+                    <div class="chart-value">113</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/frozen/craft-meal</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 4%;"></div>
+                    </div>
+                    <div class="chart-value">102</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">+10 More paths</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 81%;"></div>
+                    </div>
+                    <div class="chart-value">1,923</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Where Users Go After Plans -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">🔄</span>
+                Where Users Go After Plans (Start at Plans)
+            </h2>
+            <div class="chart-table">
+                <div class="chart-row">
+                    <div class="chart-label">/meal-kit (back to overview)
+                        <span class="chart-label-badge red">Confusion Signal</span>
+                    </div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 100%;"></div>
+                    </div>
+                    <div class="chart-value">1,020</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/meal-kit/plans (looped back)</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 23%;"></div>
+                    </div>
+                    <div class="chart-value">235</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/ (Homepage)</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 21%;"></div>
+                    </div>
+                    <div class="chart-value">216</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/cms/deals</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 14%;"></div>
+                    </div>
+                    <div class="chart-value">145</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/market/store/weekend…</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 11%;"></div>
+                    </div>
+                    <div class="chart-value">110</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/frozen</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 11%;"></div>
+                    </div>
+                    <div class="chart-value">108</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/frozen/craft-meal</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 9%;"></div>
+                    </div>
+                    <div class="chart-value">94</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/cms/your-life-made-e…</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 5%;"></div>
+                    </div>
+                    <div class="chart-value">55</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">/me/subscriptions</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 3%;"></div>
+                    </div>
+                    <div class="chart-value">27</div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-label">+6 More</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar" style="width: 40%;"></div>
+                    </div>
+                    <div class="chart-value">409</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Validated Pain Points -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">⚠️</span>
+                Validated Pain Points
+            </h2>
+            <div class="cards-grid">
+                <div class="pain-point-card">
+                    <div class="pain-point-number">1</div>
+                    <h3>Plans Page Not Answering Core Question</h3>
+                    <p>1,020 backwards navigations suggest users don't understand what they're signing up for or why it matters.</p>
+                </div>
+
+                <div class="pain-point-card">
+                    <div class="pain-point-number">2</div>
+                    <h3>Circular Navigation & Indecision</h3>
+                    <p>306 return visitors and 235 looping back to /meal-kit/plans indicates high uncertainty about plan selection.</p>
+                </div>
+
+                <div class="pain-point-card">
+                    <div class="pain-point-number">3</div>
+                    <h3>PlanSelection→Confirmation Critical Break</h3>
+                    <p>72.4% abandonment rate here is the single largest leakage point in the entire funnel—this demands immediate investigation.</p>
+                </div>
+
+                <div class="pain-point-card">
+                    <div class="pain-point-number">4</div>
+                    <h3>Existing Subscribers Landing on Plans</h3>
+                    <p>113 users from /me/subscriptions visiting Plans suggests churn risk or subscribers exploring upgrades without proper CTA guidance.</p>
+                </div>
+
+                <div class="pain-point-card">
+                    <div class="pain-point-number">5</div>
+                    <h3>URL Fragmentation Diluting Measurement</h3>
+                    <p>/meal-kit/ vs /meal-kit, /cms/your-life-made-e… variants suggest inconsistent linking and weak SEO consolidation.</p>
+                </div>
+
+                <div class="pain-point-card">
+                    <div class="pain-point-number">6</div>
+                    <h3>Low Email Campaign Conversion</h3>
+                    <p>Smartech campaigns reach Plans but conversion attribution is unclear—likely bottlenecked at confirmation step.</p>
+                </div>
+
+                <div class="pain-point-card">
+                    <div class="pain-point-number">7</div>
+                    <h3>Content Pages as Top Referrers</h3>
+                    <p>976 + 242 users from content pages are high-intent, but conversion attribution to those campaigns is unclear.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Red Flags -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">🚩</span>
+                Red Flags by Severity
+            </h2>
+            <div class="red-flags">
+                <div class="flag-tier">
+                    <div class="flag-tier-title">🔴 Critical</div>
+                    <div class="flag-item">PlanSelection → Confirmation: 72.4% abandonment rate</div>
+                    <div class="flag-item">0.81% effective confirmation rate (0.81% of 10,472 landing users)</div>
+                    <div class="flag-item">Purchase event tracking gap — unclear if confirmed users actually completed purchase</div>
+                </div>
+
+                <div class="flag-tier">
+                    <div class="flag-tier-title">🟡 High Priority</div>
+                    <div class="flag-item">1,020 backwards navigations from Plans to /meal-kit indicates core messaging gap</div>
+                    <div class="flag-item">113 subscribers from /me/subscriptions landing on Plans — potential churn risk</div>
+                    <div class="flag-item">306 return visitors within 28 days suggests lack of conversion clarity on first visit</div>
+                    <div class="flag-item">URL fragmentation (/meal-kit/ vs /meal-kit, content URL variants) weakening SEO and measurement</div>
+                </div>
+
+                <div class="flag-tier">
+                    <div class="flag-tier-title">📌 Monitor</div>
+                    <div class="flag-item">Discrepancy between user_id_insert and sign_up event counts — verify event firing logic</div>
+                    <div class="flag-item">180 (not set) referrers — improve source attribution</div>
+                    <div class="flag-item">/meal-kit/ trailing slash variant possible duplicate — canonicalize URL structure</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Wins to Build On -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">✅</span>
+                Wins to Build On
+            </h2>
+            <div class="cards-grid">
+                <div class="win-card">
+                    <h3>
+                        <span class="emoji">📝</span>
+                        Content Marketing Is Working
+                    </h3>
+                    <p>976 + 242 users from content pages (1,218 total) are high-intent browsers. These users are engaging with your brand narrative before landing Plans.</p>
+                </div>
+
+                <div class="win-card">
+                    <h3>
+                        <span class="emoji">🏠</span>
+                        Homepage Is a Strong Conversion Bridge
+                    </h3>
+                    <p>2,387 users from homepage represent 22.8% of Plans traffic. This is your largest single qualified source—homepage CTAs are working.</p>
+                </div>
+
+                <div class="win-card">
+                    <h3>
+                        <span class="emoji">📧</span>
+                        Email Campaigns Are Reaching Plans
+                    </h3>
+                    <p>Smartech email campaigns confirmed as a traffic driver to Plans. Optimization opportunity: segment email experience for existing vs. new subscribers.</p>
+                </div>
+
+                <div class="win-card">
+                    <h3>
+                        <span class="emoji">🎯</span>
+                        567 Sign-Ups Prove the Page Converts
+                    </h3>
+                    <p>5.4% landing-to-signup rate shows Plans can turn browsers into engaged users. The bottleneck is post-signup, not acquisition. Fix the confirmation flow—you already have the audience.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: Recommended Next Steps -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">🎯</span>
+                Recommended Next Steps
+            </h2>
+            <div class="next-steps-table">
+                <div class="steps-row">
+                    <div class="priority-badge priority-p0">P0 CRITICAL</div>
+                    <div class="steps-action">Audit PlanSelection→Confirmation Checkout Step</div>
+                    <div class="steps-detail">Run user testing to identify friction points. Check for form errors, payment failures, or unclear CTAs blocking the final step.</div>
+                </div>
+
+                <div class="steps-row">
+                    <div class="priority-badge priority-p0">P0 CRITICAL</div>
+                    <div class="steps-action">Investigate Purchase Event Tracking Gap</div>
+                    <div class="steps-detail">Verify that purchase events fire correctly after Confirmation. 85 confirmations with unclear purchase attribution is a major tracking blind spot.</div>
+                </div>
+
+                <div class="steps-row">
+                    <div class="priority-badge priority-p1">P1 HIGH</div>
+                    <div class="steps-action">Redesign Plans Page to Answer Objections</div>
+                    <div class="steps-detail">1,020 backwards navigations indicate the page isn't clearly answering "What am I paying for?" and "Why is this right for me?" Add value messaging, plan comparison, and testimonials.</div>
+                </div>
+
+                <div class="steps-row">
+                    <div class="priority-badge priority-p1">P1 HIGH</div>
+                    <div class="steps-action">Subscriber-Specific CTA for /me/subscriptions Users</div>
+                    <div class="steps-detail">113 existing subscribers landing on Plans need a different call-to-action (upgrade vs. sign-up). Create a conditional flow to prevent churn confusion.</div>
+                </div>
+
+                <div class="steps-row">
+                    <div class="priority-badge priority-p2">P2 MEDIUM</div>
+                    <div class="steps-action">Consolidate URL Variants (/meal-kit/ vs /meal-kit)</div>
+                    <div class="steps-detail">Implement 301 redirects to canonicalize URLs. This reduces measurement fragmentation and improves SEO strength on primary paths.</div>
+                </div>
+
+                <div class="steps-row">
+                    <div class="priority-badge priority-p2">P2 MEDIUM</div>
+                    <div class="steps-action">Build Dedicated Email Landing Variant</div>
+                    <div class="steps-detail">Test a Plans page variant optimized for Smartech email audiences—shorter load time, mobile-first design, email-specific proof points.</div>
+                </div>
+
+                <div class="steps-row">
+                    <div class="priority-badge priority-p3">P3 MONITOR</div>
+                    <div class="steps-action">Resolve user_id_insert vs sign_up Discrepancy</div>
+                    <div class="steps-detail">Track why these event counts diverge. This mismatch will distort all downstream conversion analysis if not fixed.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer spacing -->
+        <div style="margin-bottom: 40px;"></div>
+    </div>
+</body>
+</html>
