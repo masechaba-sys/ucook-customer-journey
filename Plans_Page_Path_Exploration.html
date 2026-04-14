@@ -43,38 +43,45 @@
             padding-top: 80px;
         }
 
-        /* Fixed Back to Hub Button */
-        .back-button {
+        /* Back Navigation Widget */
+        .uc-nav-widget {
             position: fixed;
             top: 16px;
             left: 16px;
-            z-index: 999;
+            z-index: 1000;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
             gap: 8px;
-            padding: 10px 16px;
-            background-color: var(--white);
-            border: 2px solid var(--uc-orange);
+        }
+        .uc-logo-chip {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 7px 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        }
+        .uc-logo-chip img {
+            height: 20px;
+            display: block;
+        }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--white);
             color: var(--uc-orange);
-            border-radius: 24px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 16px 8px 12px;
+            border-radius: 50px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            border: 1.5px solid var(--uc-orange);
+            transition: background 0.15s, color 0.15s;
         }
-
-        .back-button:hover {
-            background-color: var(--uc-orange);
-            color: var(--white);
-        }
-
-        .back-button svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-        }
+        .back-button:hover { background: var(--uc-orange); color: var(--white); }
+        .back-button svg { width: 14px; height: 14px; flex-shrink: 0; stroke: currentColor; stroke-width: 2; }
 
         /* Header */
         .header {
@@ -551,13 +558,16 @@
     </style>
 </head>
 <body>
-    <!-- Back to Hub Button -->
-    <a href="index.html" class="back-button">
-        <svg viewBox="0 0 24 24" fill="none">
-            <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    <!-- Back Navigation Widget -->
+    <div class="uc-nav-widget">
+      <div class="uc-logo-chip">
+        <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" />
+      </div>
+      <a href="index.html" class="back-button">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Back to Hub
-    </a>
+      </a>
+    </div>
 
     <!-- Header -->
     <div class="header">

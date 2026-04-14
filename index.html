@@ -49,12 +49,12 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   }
   .nav-logo {
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: var(--uc-orange);
-    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
   }
-  .nav-logo span { color: var(--text-black); }
+  .nav-logo img { height: 27px; display: block; }
   .nav-links {
     display: flex;
     gap: 4px;
@@ -855,7 +855,9 @@
 
 <!-- ═══ TOP NAV ═══ -->
 <nav class="top-nav">
-  <div class="nav-logo">U<span>COOK</span></div>
+  <a href="#overview" class="nav-logo">
+    <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" />
+  </a>
   <ul class="nav-links">
     <li><a href="#overview" class="active">Overview</a></li>
     <li><a href="#reports">Reports</a></li>
