@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Journey — Discovery Framework</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #F5F9F8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 60px;
+  }
+  .page-title { text-align: center; margin-bottom: 36px; }
+  .page-title h1 { font-size: 22px; color: #1A7A6E; font-weight: 700; }
+  .page-title p  { font-size: 13px; color: #888; margin-top: 5px; }
+
+  .diagram-wrap { width: 100%; max-width: 1060px; }
+
+  /* step number chips above */
+  .step-chips {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 10px;
+  }
+  .chip {
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .c1 { background: #1A7A6E; }
+  .c2 { background: #1565C0; }
+  .c3 { background: #C06A15; }
+  .c4 { background: #2E7D32; }
+  .chip-arrow { text-align: center; color: #999; font-size: 18px; }
+
+  /* SVG */
+  .svg-wrap { width: 100%; }
+  svg { width: 100%; height: auto; display: block; }
+
+  /* Activity cards */
+  .activity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .act-card {
+    border-radius: 10px;
+    padding: 16px 18px;
+    border-top: 4px solid;
+  }
+  .act-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .act-card ul { margin-left: 15px; }
+  .act-card li { font-size: 12px; line-height: 1.75; color: #444; }
+  .ac1 { background: #E6F4F1; border-color: #1A7A6E; }  .ac1 h3 { color: #1A7A6E; }
+  .ac2 { background: #E3F2FD; border-color: #1565C0; }  .ac2 h3 { color: #1565C0; }
+  .ac3 { background: #FFF3E0; border-color: #C06A15; }  .ac3 h3 { color: #C06A15; }
+  .ac4 { background: #E8F5E9; border-color: #2E7D32; }  .ac4 h3 { color: #2E7D32; }
+
+  /* Principles */
+  .principle-strip {
+    max-width: 1060px; width: 100%;
+    margin-top: 24px;
+    background: #1A7A6E;
+    border-radius: 10px;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .pl { color: #fff; font-size: 12px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .06em; white-space: nowrap; }
+  .principles { display: flex; gap: 28px; flex-wrap: wrap; }
+  .pr { display: flex; align-items: center; gap: 8px;
+        color: rgba(255,255,255,.9); font-size: 12px; }
+  .pr::before { content:""; width:7px; height:7px; border-radius:50%;
+                background:#A8D5CF; flex-shrink:0; display:block; }
+
+  /* ── Back nav widget ── */
+  .uc-nav-widget {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .uc-logo-chip {
+    background: #fff;
+    border-radius: 10px;
+    padding: 7px 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  }
+  .uc-logo-chip img { height: 20px; display: block; }
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    color: #1A7A6E;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px 8px 12px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    border: 1.5px solid #1A7A6E;
+    transition: background 0.15s, color 0.15s;
+  }
+  .back-button:hover { background: #1A7A6E; color: #fff; }
+  .back-button svg { width: 14px; height: 14px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="uc-nav-widget">
+  <div class="uc-logo-chip">
+    <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK"
+         onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\'font-weight:900;font-size:14px;color:#1E1E1E;\'>UCOOK</span>')">
+  </div>
+  <a href="index.html" class="back-button">
+    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to Hub
+  </a>
+</div>
+
+<div class="page-title">
+  <h1>Customer Journey — Discovery Framework</h1>
+  <p>UCOOK Product Team  •  Double Diamond adapted to Lean Discovery</p>
+</div>
+
+<div class="diagram-wrap">
+
+  <!-- Step number chips -->
+  <div class="step-chips">
+    <div class="chip c1">Step 1 · Discover</div>
+    <div class="chip-arrow">›</div>
+    <div class="chip c2">Step 2 · Validate</div>
+    <div class="chip-arrow">›</div>
+    <div class="chip c3">Step 3 · Prioritize</div>
+    <div class="chip-arrow">›</div>
+    <div class="chip c4">Step 4 · Build</div>
+  </div>
+
+  <!-- Main SVG -->
+  <div class="svg-wrap">
+  <svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- fills -->
+      <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#1A7A6E" stop-opacity=".08"/>
+        <stop offset="100%" stop-color="#1A7A6E" stop-opacity=".28"/>
+      </linearGradient>
+      <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#1565C0" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="#1565C0" stop-opacity=".08"/>
+      </linearGradient>
+      <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#C06A15" stop-opacity=".08"/>
+        <stop offset="100%" stop-color="#C06A15" stop-opacity=".28"/>
+      </linearGradient>
+      <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#2E7D32" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="#2E7D32" stop-opacity=".08"/>
+      </linearGradient>
+      <!-- arrowhead -->
+      <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#888"/>
+      </marker>
+      <marker id="arr-teal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#1A7A6E"/>
+      </marker>
+    </defs>
+
+    <!-- ════════════════════════════════════════════
+         DOUBLE DIAMOND
+         D1: x=30 → x=530   mid at x=280
+         D2: x=530 → x=1030  mid at x=780
+         Centre axis y=155
+    ════════════════════════════════════════════ -->
+
+    <!-- Diamond 1 LEFT half: open / diverge (DISCOVER) -->
+    <polygon points="30,155 280,30 280,280"
+             fill="url(#g1)" stroke="#1A7A6E" stroke-width="2.5" stroke-linejoin="round"/>
+
+    <!-- Diamond 1 RIGHT half: close / converge (VALIDATE) -->
+    <polygon points="280,30 530,155 280,280"
+             fill="url(#g2)" stroke="#1565C0" stroke-width="2.5" stroke-linejoin="round"/>
+
+    <!-- Diamond 2 LEFT half: open (PRIORITIZE) -->
+    <polygon points="530,155 780,30 780,280"
+             fill="url(#g3)" stroke="#C06A15" stroke-width="2.5" stroke-linejoin="round"/>
+
+    <!-- Diamond 2 RIGHT half: close (BUILD) -->
+    <polygon points="780,30 1030,155 780,280"
+             fill="url(#g4)" stroke="#2E7D32" stroke-width="2.5" stroke-linejoin="round"/>
+
+    <!-- ── Centre axis line ── -->
+    <line x1="20" y1="155" x2="1040" y2="155"
+          stroke="#ddd" stroke-width="1" stroke-dasharray="4,6"/>
+
+    <!-- ── Vertical dividers ── -->
+    <line x1="280" y1="22" x2="280" y2="288"
+          stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,4"/>
+    <line x1="530" y1="22" x2="530" y2="288"
+          stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,4"/>
+    <line x1="780" y1="22" x2="780" y2="288"
+          stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+    <!-- ════ NODE CIRCLES ════ -->
+    <!-- Start -->
+    <circle cx="30" cy="155" r="13" fill="#1A7A6E" stroke="white" stroke-width="2"/>
+    <text x="30" y="160" text-anchor="middle" font-size="12" fill="white" font-weight="bold">1</text>
+
+    <!-- D1 mid: validated insights -->
+    <circle cx="280" cy="155" r="15" fill="white" stroke="#1565C0" stroke-width="2.5"/>
+    <circle cx="280" cy="155" r="8"  fill="#1565C0"/>
+
+    <!-- D2 start -->
+    <circle cx="530" cy="155" r="13" fill="#C06A15" stroke="white" stroke-width="2"/>
+    <text x="530" y="160" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+
+    <!-- D2 mid -->
+    <circle cx="780" cy="155" r="15" fill="white" stroke="#2E7D32" stroke-width="2.5"/>
+    <circle cx="780" cy="155" r="8"  fill="#2E7D32"/>
+
+    <!-- End node -->
+    <circle cx="1030" cy="155" r="15" fill="#2E7D32" stroke="white" stroke-width="2"/>
+    <text x="1030" y="160" text-anchor="middle" font-size="13" fill="white" font-weight="bold">✓</text>
+
+    <!-- ════ STEP LABELS INSIDE DIAMOND HALVES ════ -->
+    <!-- DISCOVER -->
+    <text x="155" y="138" text-anchor="middle" font-size="16" fill="#0D5C52" font-weight="bold">DISCOVER</text>
+    <text x="155" y="157" text-anchor="middle" font-size="12" fill="#0D5C52">Internal analysis</text>
+    <text x="155" y="172" text-anchor="middle" font-size="12" fill="#0D5C52">&amp; workshop output</text>
+
+    <!-- VALIDATE -->
+    <text x="405" y="138" text-anchor="middle" font-size="16" fill="#0D47A1" font-weight="bold">VALIDATE</text>
+    <text x="405" y="157" text-anchor="middle" font-size="12" fill="#0D47A1">Customer research</text>
+    <text x="405" y="172" text-anchor="middle" font-size="12" fill="#0D47A1">&amp; assumption testing</text>
+
+    <!-- PRIORITIZE -->
+    <text x="655" y="138" text-anchor="middle" font-size="16" fill="#7B3A00" font-weight="bold">PRIORITIZE</text>
+    <text x="655" y="157" text-anchor="middle" font-size="12" fill="#7B3A00">Evidence-based</text>
+    <text x="655" y="172" text-anchor="middle" font-size="12" fill="#7B3A00">ranking &amp; decisions</text>
+
+    <!-- BUILD -->
+    <text x="905" y="138" text-anchor="middle" font-size="16" fill="#1B5E20" font-weight="bold">BUILD</text>
+    <text x="905" y="157" text-anchor="middle" font-size="12" fill="#1B5E20">Design, develop</text>
+    <text x="905" y="172" text-anchor="middle" font-size="12" fill="#1B5E20">&amp; ship solutions</text>
+
+    <!-- ════ DIVERGE / CONVERGE TAGS ════ -->
+    <text x="155" y="18"  text-anchor="middle" font-size="10" fill="#999">↔  diverge</text>
+    <text x="405" y="18"  text-anchor="middle" font-size="10" fill="#999">converge  →</text>
+    <text x="655" y="18"  text-anchor="middle" font-size="10" fill="#999">↔  diverge</text>
+    <text x="905" y="18"  text-anchor="middle" font-size="10" fill="#999">converge  →</text>
+
+    <!-- ════ NODE LABELS BELOW ════ -->
+    <text x="30"  y="180" text-anchor="middle" font-size="10" fill="#1A7A6E" font-weight="bold">Start</text>
+
+    <text x="280" y="300" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">Assumptions</text>
+    <text x="280" y="312" text-anchor="middle" font-size="10" fill="#1565C0">mapped</text>
+
+    <text x="530" y="180" text-anchor="middle" font-size="10" fill="#C06A15" font-weight="bold">Insights</text>
+    <text x="530" y="193" text-anchor="middle" font-size="10" fill="#C06A15">validated</text>
+
+    <text x="780" y="300" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">Backlog</text>
+    <text x="780" y="312" text-anchor="middle" font-size="10" fill="#2E7D32">ordered</text>
+
+    <text x="1030" y="180" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">Shipped</text>
+
+    <!-- ════ YOU ARE HERE BADGE ════ -->
+    <!-- Pointer line from badge down to the end-of-diamond-1 node -->
+    <line x1="530" y1="27" x2="530" y2="132"
+          stroke="#1A7A6E" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <!-- Outer pulse ring on the node -->
+    <circle cx="530" cy="155" r="22" fill="none" stroke="#1A7A6E" stroke-width="2"
+            stroke-dasharray="5,3" opacity="0.7"/>
+    <!-- Badge centred at x=530 -->
+    <rect x="420" y="3" width="220" height="22" rx="11" fill="#1A7A6E"/>
+    <text x="530" y="18" text-anchor="middle" font-size="11" fill="white" font-weight="bold">📍  You are here</text>
+
+    <!-- ════ DIAMOND LABELS ════ -->
+    <rect x="215" y="290" width="130" height="18" rx="4" fill="#E3F2FD"/>
+    <text x="280" y="302" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">Diamond 1 — Problem Space</text>
+
+    <rect x="713" y="290" width="134" height="18" rx="4" fill="#E8F5E9"/>
+    <text x="780" y="302" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">Diamond 2 — Solution Space</text>
+
+    <!-- ════ ITERATION LOOP ARROW ════ -->
+    <path d="M 990,270 Q 530,340 60,270"
+          fill="none" stroke="#1A7A6E" stroke-width="1.5"
+          stroke-dasharray="6,4" marker-end="url(#arr-teal)"/>
+    <text x="530" y="318" text-anchor="middle" font-size="10"
+          fill="#1A7A6E" font-weight="bold">Continuous — repeat the loop as the project evolves</text>
+
+  </svg>
+  </div>
+
+  <!-- Activity cards -->
+  <div class="activity-grid">
+    <div class="act-card ac1">
+      <h3>1 · Discover</h3>
+      <ul>
+        <li>Kickoff workshop</li>
+        <li>End-to-end journey mapping</li>
+        <li>Pain point identification</li>
+        <li>Team knowledge &amp; intuition</li>
+        <li>Existing data &amp; CX reports</li>
+      </ul>
+    </div>
+    <div class="act-card ac2">
+      <h3>2 · Validate</h3>
+      <ul>
+        <li>Customer interviews (JTBD)</li>
+        <li>Usability &amp; session recordings</li>
+        <li>Quantitative surveys</li>
+        <li>Funnel &amp; behavioural data</li>
+        <li>Support ticket analysis</li>
+      </ul>
+    </div>
+    <div class="act-card ac3">
+      <h3>3 · Prioritize</h3>
+      <ul>
+        <li>Confirm or refute assumptions</li>
+        <li>Rescore pain point backlog</li>
+        <li>Impact × effort matrix</li>
+        <li>Define success metrics (OKRs)</li>
+        <li>Agree what to build first</li>
+      </ul>
+    </div>
+    <div class="act-card ac4">
+      <h3>4 · Build</h3>
+      <ul>
+        <li>Solution design &amp; prototyping</li>
+        <li>Engineering &amp; development</li>
+        <li>QA &amp; user testing</li>
+        <li>Ship &amp; measure impact</li>
+        <li>Feed learnings into next loop</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Principles strip -->
+  <div class="principle-strip">
+    <span class="pl">Core principles</span>
+    <div class="principles">
+      <span class="pr">Workshop outputs are hypotheses, not facts</span>
+      <span class="pr">Validate the riskiest assumptions first</span>
+      <span class="pr">Evidence overrides seniority</span>
+      <span class="pr">Each Build cycle feeds the next Discover</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

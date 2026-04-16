@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCOOK — Customer Journey Map & Pain Points</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange:   #FF6803;
+    --orange-d: #E87543;
+    --navy:     #043B87;
+    --blue-d:   #1D5D90;
+    --blue-m:   #216BA5;
+    --green:    #32BE3F;
+    --gold:     #FCD266;
+    --pink:     #DF346D;
+    --near-blk: #1E1E1E;
+    --dark:     #333333;
+    --med:      #525252;
+    --muted:    #787878;
+    --border:   #CCCCCC;
+    --surface:  #F0F0F0;
+    --white:    #FFFFFF;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    background: #e8edf4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* ── Back nav widget ── */
+  .uc-nav-widget {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .uc-logo-chip {
+    background: #fff;
+    border-radius: 10px;
+    padding: 7px 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  }
+  .uc-logo-chip img { height: 20px; display: block; }
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    color: var(--orange);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px 8px 12px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    border: 1.5px solid var(--orange);
+    transition: background 0.15s, color 0.15s;
+  }
+  .back-button:hover { background: var(--orange); color: #fff; }
+  .back-button svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── Slide container: 16:9 aspect ── */
+  .slide {
+    width: min(1280px, 100vw);
+    aspect-ratio: 16 / 9;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.22);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ══════════ HEADER BAR ══════════ */
+  .slide-header {
+    background: var(--navy);
+    padding: 0 32px;
+    height: 52px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .slide-header .left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-wrap img { height: 18px; display: block; }
+  .slide-header .divider {
+    width: 1px; height: 20px;
+    background: rgba(255,255,255,0.25);
+  }
+  .slide-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .slide-meta {
+    font-size: 11px; font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.04em;
+  }
+  .slide-tag {
+    background: var(--orange);
+    color: var(--white);
+    font-size: 10px; font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 50px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ══════════ SLIDE BODY ══════════ */
+  .slide-body {
+    flex: 1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 14px 28px 12px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 9px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  /* ══════════ JOURNEY MAP SECTION ══════════ */
+  .journey-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .journey-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .journey-label {
+    flex-shrink: 0;
+    width: 132px;
+    font-size: 9.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--white);
+    padding: 5px 10px;
+    border-radius: 8px;
+    line-height: 1.3;
+  }
+  .jl-1 { background: var(--orange); }
+  .jl-2 { background: var(--navy); }
+  .jl-3 { background: var(--pink); }
+
+  .journey-stages {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .stage-item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stage-pill {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    font-size: 9px; font-weight: 600;
+    color: var(--dark);
+    padding: 5px 4px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.15s;
+  }
+
+  .stage-arrow {
+    color: var(--muted);
+    font-size: 9px;
+    padding: 0 2px;
+    flex-shrink: 0;
+  }
+
+  /* Colour accents per journey */
+  .j1 .stage-pill { border-color: rgba(255,104,3,0.3); background: rgba(255,104,3,0.06); color: #7a3200; }
+  .j2 .stage-pill { border-color: rgba(4,59,135,0.25); background: rgba(4,59,135,0.06); color: #022060; }
+  .j3 .stage-pill { border-color: rgba(223,52,109,0.25); background: rgba(223,52,109,0.06); color: #8b1a40; }
+
+  /* ══════════ DIVIDER ══════════ */
+  .h-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2px 0;
+  }
+
+  /* ══════════ PAIN POINTS SECTION ══════════ */
+  .pain-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+  }
+
+  .clusters-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .cluster-card {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .cluster-head {
+    padding: 7px 10px 6px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cluster-number {
+    font-size: 8.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .cluster-name {
+    font-size: 9.5px; font-weight: 800;
+    line-height: 1.25;
+    color: var(--near-blk);
+  }
+
+  /* Cluster accent colours */
+  .cl-1 { border-top: 3px solid var(--orange); }
+  .cl-1 .cluster-number { color: var(--orange); }
+
+  .cl-2 { border-top: 3px solid var(--navy); }
+  .cl-2 .cluster-number { color: var(--navy); }
+
+  .cl-3 { border-top: 3px solid var(--gold); }
+  .cl-3 .cluster-number { color: #8B6914; }
+  .cl-3 .cluster-head { border-top: 3px solid var(--gold); }
+
+  .cl-4 { border-top: 3px solid var(--pink); }
+  .cl-4 .cluster-number { color: var(--pink); }
+
+  .cl-5 { border-top: 3px solid var(--blue-m); }
+  .cl-5 .cluster-number { color: var(--blue-m); }
+
+  .cluster-body {
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .pain-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .impact-dot {
+    flex-shrink: 0;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 3px;
+  }
+  .dot-high  { background: #F20C1A; }
+  .dot-med   { background: var(--gold); }
+
+  .pain-text {
+    font-size: 8.5px; font-weight: 500;
+    color: var(--dark);
+    line-height: 1.4;
+  }
+
+  /* ── Impact legend ── */
+  .impact-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 2px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8.5px; font-weight: 600;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ══════════ FOOTER BAR ══════════ */
+  .slide-footer {
+    height: 24px; flex-shrink: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+  }
+  .slide-footer span {
+    font-size: 8.5px; font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .slide-footer .dot-sep { color: var(--border); margin: 0 6px; }
+</style>
+</head>
+<body>
+
+<div class="uc-nav-widget">
+  <div class="uc-logo-chip">
+    <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK"
+         onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\'font-weight:900;font-size:14px;color:#1E1E1E;\'>UCOOK</span>')">
+  </div>
+  <a href="index.html" class="back-button">
+    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to Hub
+  </a>
+</div>
+
+<div class="slide">
+
+  <!-- ── Header ── -->
+  <div class="slide-header">
+    <div class="left">
+      <div class="logo-wrap">
+        <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span style="display:none;color:#fff;font-size:15px;font-weight:900;letter-spacing:0.04em;">UCOOK</span>
+      </div>
+      <div class="divider"></div>
+      <span class="slide-title">Customer Journey — Journey Map &amp; Pain Point Summary</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="slide-meta">Session 1 Output  ·  Discover Phase</span>
+      <span class="slide-tag">Discovery</span>
+    </div>
+  </div>
+
+  <!-- ── Body ── -->
+  <div class="slide-body">
+
+    <!-- JOURNEY MAP -->
+    <div class="journey-section">
+      <div class="section-label">Journey Map — Three Macro Journeys in Scope</div>
+
+      <!-- Journey 1 -->
+      <div class="journey-row j1">
+        <div class="journey-label jl-1">J1 · Acquisition &amp; Onboarding</div>
+        <div class="journey-stages">
+          <div class="stage-item"><div class="stage-pill">Awareness</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Discovery &amp; Browse</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Plan Setup</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Plan Confirmation</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Billing &amp; Dispatch</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">First Box Delivery</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">First Cook</div></div>
+        </div>
+      </div>
+
+      <!-- Journey 2 -->
+      <div class="journey-row j2">
+        <div class="journey-label jl-2">J2 · Active Subscription</div>
+        <div class="journey-stages">
+          <div class="stage-item"><div class="stage-pill">Dish Selection</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Billing</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Delivery &amp; Receipt</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Cook &amp; Eat Experience</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Rate &amp; Review</div></div>
+        </div>
+      </div>
+
+      <!-- Journey 3 -->
+      <div class="journey-row j3">
+        <div class="journey-label jl-3">J3 · Pause &amp; Reactivation</div>
+        <div class="journey-stages">
+          <div class="stage-item"><div class="stage-pill">Pause Trigger &amp; Reason</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Pause State — Comms Gap</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Reactivation</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="h-divider"></div>
+
+    <!-- PAIN POINTS -->
+    <div class="pain-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="section-label">Pain Points — 16 Issues Across 5 Thematic Clusters</div>
+        <div class="impact-legend">
+          <div class="legend-item"><div class="legend-dot dot-high"></div>High Impact</div>
+          <div class="legend-item"><div class="legend-dot dot-med"></div>Medium Impact</div>
+        </div>
+      </div>
+
+      <div class="clusters-grid">
+
+        <!-- Cluster 1 -->
+        <div class="cluster-card cl-1">
+          <div class="cluster-head">
+            <span class="cluster-number">Cluster 1</span>
+            <span class="cluster-name">Discovery &amp; Pricing Clarity</span>
+          </div>
+          <div class="cluster-body">
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Pricing transparency — customers don't understand what R800 means</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Can't distinguish subscription vs on-demand products</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Awareness campaigns break before plan selection</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">Don't know what they're buying before committing</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">Can't add single products to cart</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cluster 2 -->
+        <div class="cluster-card cl-2">
+          <div class="cluster-head">
+            <span class="cluster-number">Cluster 2</span>
+            <span class="cluster-name">Onboarding &amp; First-Box Friction</span>
+          </div>
+          <div class="cluster-body">
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Promo codes don't auto-apply and aren't pulled through to cart</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">No proactive delivery comms — customers don't know when box arrives</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">Delivery areas not visible upfront</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">Delivery time not customisable</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cluster 3 -->
+        <div class="cluster-card cl-3">
+          <div class="cluster-head">
+            <span class="cluster-number">Cluster 3</span>
+            <span class="cluster-name">Billing Transparency &amp; Comms</span>
+          </div>
+          <div class="cluster-body">
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Not reminded of upcoming billing — charges feel unexpected</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Don't know when billed or on what cadence</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">Account creation email and next-step journey are unclear</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cluster 4 -->
+        <div class="cluster-card cl-4">
+          <div class="cluster-head">
+            <span class="cluster-number">Cluster 4</span>
+            <span class="cluster-name">Pause &amp; Reactivation Gaps</span>
+          </div>
+          <div class="cluster-body">
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Pause journey is hidden — customers can't easily find how to pause</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-high"></div>
+              <span class="pain-text">Paused customers not on mailer list receive zero communication</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cluster 5 -->
+        <div class="cluster-card cl-5">
+          <div class="cluster-head">
+            <span class="cluster-number">Cluster 5</span>
+            <span class="cluster-name">Internal Knowledge Gaps</span>
+          </div>
+          <div class="cluster-body">
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">Limited demographic &amp; behavioural insight beyond purchase data</span>
+            </div>
+            <div class="pain-item">
+              <div class="impact-dot dot-med"></div>
+              <span class="pain-text">On-demand conversion not well understood or optimised separately</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /clusters-grid -->
+    </div><!-- /pain-section -->
+
+  </div><!-- /slide-body -->
+
+  <!-- ── Footer ── -->
+  <div class="slide-footer">
+    <span>CX Journey Optimisation Project<span class="dot-sep">·</span>Session 1 — Discover</span>
+    <span>3 Journeys<span class="dot-sep">·</span>16 Pain Points<span class="dot-sep">·</span>5 Clusters</span>
+    <span>Facilitator: Masechaba<span class="dot-sep">·</span>April 2026</span>
+  </div>
+
+</div><!-- /slide -->
+
+</body>
+</html>
