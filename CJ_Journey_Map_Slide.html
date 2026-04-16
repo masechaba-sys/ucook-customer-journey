@@ -148,7 +148,7 @@
   .journey-section {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
 
   .journey-row {
@@ -170,6 +170,7 @@
   .jl-1 { background: var(--orange); }
   .jl-2 { background: var(--navy); }
   .jl-3 { background: var(--pink); }
+  .jl-4 { background: #0e7490; }
 
   .journey-stages {
     display: flex;
@@ -210,9 +211,10 @@
   }
 
   /* Colour accents per journey */
-  .j1 .stage-pill { border-color: rgba(255,104,3,0.3); background: rgba(255,104,3,0.06); color: #7a3200; }
-  .j2 .stage-pill { border-color: rgba(4,59,135,0.25); background: rgba(4,59,135,0.06); color: #022060; }
+  .j1 .stage-pill { border-color: rgba(255,104,3,0.3);   background: rgba(255,104,3,0.06);  color: #7a3200; }
+  .j2 .stage-pill { border-color: rgba(4,59,135,0.25);   background: rgba(4,59,135,0.06);   color: #022060; }
   .j3 .stage-pill { border-color: rgba(223,52,109,0.25); background: rgba(223,52,109,0.06); color: #8b1a40; }
+  .j4 .stage-pill { border-color: rgba(14,116,144,0.3);  background: rgba(14,116,144,0.06); color: #0c4a58; }
 
   /* ══════════ DIVIDER ══════════ */
   .h-divider {
@@ -385,11 +387,11 @@
 
     <!-- JOURNEY MAP -->
     <div class="journey-section">
-      <div class="section-label">Journey Map — Three Macro Journeys in Scope</div>
+      <div class="section-label">Journey Map — Four Macro Journeys in Scope</div>
 
       <!-- Journey 1 -->
       <div class="journey-row j1">
-        <div class="journey-label jl-1">J1 · Acquisition &amp; Onboarding</div>
+        <div class="journey-label jl-1">J1 · Subscription Acquisition</div>
         <div class="journey-stages">
           <div class="stage-item"><div class="stage-pill">Awareness</div><span class="stage-arrow">›</span></div>
           <div class="stage-item"><div class="stage-pill">Discovery &amp; Browse</div><span class="stage-arrow">›</span></div>
@@ -420,6 +422,21 @@
           <div class="stage-item"><div class="stage-pill">Pause Trigger &amp; Reason</div><span class="stage-arrow">›</span></div>
           <div class="stage-item"><div class="stage-pill">Pause State — Comms Gap</div><span class="stage-arrow">›</span></div>
           <div class="stage-item"><div class="stage-pill">Reactivation</div></div>
+        </div>
+      </div>
+
+      <!-- Journey 4 -->
+      <div class="journey-row j4">
+        <div class="journey-label jl-4">J4 · On Demand</div>
+        <div class="journey-stages">
+          <div class="stage-item"><div class="stage-pill" title="Word of mouth · Social media (paid/organic) · Referral · Partners · Email">Awareness Channels</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Website &amp; App Browse</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Product Selection</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Sign Up</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Checkout</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Delivery</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Receive Order</div><span class="stage-arrow">›</span></div>
+          <div class="stage-item"><div class="stage-pill">Rate &amp; Feedback</div></div>
         </div>
       </div>
     </div>
@@ -561,7 +578,7 @@
   <!-- ── Footer ── -->
   <div class="slide-footer">
     <span>CX Journey Optimisation Project<span class="dot-sep">·</span>Session 1 — Discover</span>
-    <span>3 Journeys<span class="dot-sep">·</span>16 Pain Points<span class="dot-sep">·</span>5 Clusters</span>
+    <span>4 Journeys<span class="dot-sep">·</span>16 Pain Points<span class="dot-sep">·</span>5 Clusters</span>
     <span>Facilitator: Masechaba<span class="dot-sep">·</span>April 2026</span>
   </div>
 

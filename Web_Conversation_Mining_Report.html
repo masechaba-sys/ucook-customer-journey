@@ -3,1530 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Conversation Mining Report</title>
+    <title>Web Conversation Mining Report · UCOOK</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --uc-orange: #FF6803;
-            --uc-orange-dark: #E87543;
-            --uc-navy: #043B87;
-            --uc-blue-dark: #1D5D90;
-            --uc-blue-mid: #216BA5;
-            --uc-green: #32BE3F;
-            --uc-gold: #FCD266;
-            --uc-pink: #DF346D;
-            --uc-red: #F20C1A;
-            --text-black: #1E1E1E;
-            --text-dark: #333333;
-            --text-med: #525252;
-            --text-muted: #787878;
-            --border: #CCCCCC;
-            --surface: #F0F0F0;
-            --white: #FFFFFF;
+            --uc-orange: #FF6803; --uc-orange-dark: #E87543;
+            --uc-navy: #043B87; --uc-blue-dark: #1D5D90; --uc-blue-mid: #216BA5;
+            --uc-green: #32BE3F; --uc-gold: #FCD266; --uc-pink: #DF346D; --uc-red: #F20C1A;
+            --text-black: #1E1E1E; --text-dark: #333333; --text-med: #525252; --text-muted: #787878;
+            --border: #CCCCCC; --surface: #F0F0F0; --white: #FFFFFF;
         }
+        body { font-family: 'Nunito', sans-serif; background: var(--surface); color: var(--text-black); line-height: 1.6; padding: 80px 20px 40px; }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: var(--surface);
-            color: var(--text-black);
-            line-height: 1.6;
-            padding: 80px 20px 40px 20px;
-        }
-
-        /* Back Navigation Widget */
-        .uc-nav-widget {
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        .uc-logo-chip {
-            background: var(--white);
-            border-radius: 10px;
-            padding: 7px 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-        }
-        .uc-logo-chip img {
-            height: 20px;
-            display: block;
-        }
-        .back-to-hub {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            background: var(--white);
-            color: var(--uc-orange);
-            font-family: 'Nunito', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            padding: 8px 16px 8px 12px;
-            border-radius: 50px;
-            text-decoration: none;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-            border: 1.5px solid var(--uc-orange);
-            transition: background 0.15s, color 0.15s;
-        }
+        .uc-nav-widget { position: fixed; top: 16px; left: 16px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+        .uc-logo-chip { background: var(--white); border-radius: 10px; padding: 7px 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); font-weight: 800; color: var(--uc-orange); letter-spacing: 1px; font-size: 15px; }
+        .back-to-hub { display: inline-flex; align-items: center; gap: 7px; background: var(--white); color: var(--uc-orange); font-size: 13px; font-weight: 700; padding: 8px 16px 8px 12px; border-radius: 50px; text-decoration: none; box-shadow: 0 2px 12px rgba(0,0,0,0.15); border: 1.5px solid var(--uc-orange); transition: background .15s, color .15s; }
         .back-to-hub:hover { background: var(--uc-orange); color: var(--white); }
         .back-to-hub svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #216BA5 0%, #32BE3F 100%);
-            border-radius: 16px;
-            padding: 48px 40px;
-            color: var(--white);
-            margin-bottom: 40px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            font-size: 18px;
-            font-weight: 400;
-            opacity: 0.95;
-        }
-
-        /* Card Container */
-        .card {
-            background-color: var(--white);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 24px;
-        }
-
-        /* Headline Findings */
-        .findings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .finding-card {
-            background-color: var(--white);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-left: 6px solid var(--uc-orange);
-        }
-
-        .finding-card h3 {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--uc-orange);
-            margin-bottom: 12px;
-        }
-
-        .finding-card p {
-            font-size: 16px;
-            color: var(--text-med);
-            line-height: 1.5;
-        }
-
-        /* KPI Grid */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .kpi-item {
-            background-color: var(--white);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        .kpi-item .value {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--uc-blue-mid);
-            margin-bottom: 8px;
-        }
-
-        .kpi-item .label {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Table Styles */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background-color: var(--surface);
-        }
-
-        th {
-            padding: 16px 12px;
-            text-align: left;
-            font-weight: 700;
-            color: var(--text-black);
-            border-bottom: 2px solid var(--border);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            padding: 14px 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-        }
-
-        tbody tr:hover {
-            background-color: var(--surface);
-        }
-
-        .theme-name {
-            font-weight: 600;
-            color: var(--text-black);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-right: 6px;
-        }
-
-        .badge-up {
-            background-color: #E8F5E9;
-            color: var(--uc-green);
-        }
-
-        .badge-down {
-            background-color: #FFEBEE;
-            color: var(--uc-red);
-        }
-
-        .badge-same {
-            background-color: #FFF3E0;
-            color: #FF6803;
-        }
-
-        .trend-arrow {
-            font-size: 16px;
-            margin-right: 4px;
-        }
-
-        /* Section Titles */
-        .section-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--text-black);
-            margin-top: 48px;
-            margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-number {
-            font-size: 48px;
-            color: var(--uc-orange);
-            font-weight: 800;
-        }
-
-        /* Cluster Deep Dive */
-        .cluster-section {
-            background-color: var(--white);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 32px;
-        }
-
-        .cluster-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .cluster-number {
-            font-size: 56px;
-            font-weight: 800;
-            color: var(--uc-orange);
-            line-height: 1;
-        }
-
-        .cluster-info h3 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-black);
-            margin-bottom: 12px;
-        }
-
-        .cluster-info p {
-            font-size: 15px;
-            color: var(--text-med);
-            line-height: 1.6;
-        }
-
-        .quotes-container {
-            margin-top: 24px;
-        }
-
-        .quote-block {
-            background-color: var(--surface);
-            border-left: 4px solid var(--uc-blue-mid);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
-            font-style: italic;
-            color: var(--text-dark);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .quote-block .channel-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--white);
-            margin-bottom: 8px;
-            margin-right: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .badge-email {
-            background-color: var(--uc-blue-mid);
-        }
-
-        .badge-web {
-            background-color: var(--uc-orange);
-        }
-
-        .badge-whatsapp {
-            background-color: var(--uc-green);
-        }
-
-        .badge-instagram {
-            background-color: var(--uc-pink);
-        }
-
-        .quote-text {
-            display: block;
-            margin-top: 8px;
-        }
-
-        /* Sub-theme */
-        .sub-theme {
-            background-color: #FAFAFA;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
-            border: 1px solid var(--border);
-        }
-
-        .sub-theme-title {
-            font-weight: 700;
-            color: var(--text-black);
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .sub-theme-count {
-            color: var(--text-muted);
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-
-        /* Warning Callout */
-        .warning-callout {
-            background-color: #FFEBEE;
-            border-left: 6px solid var(--uc-red);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .warning-callout h4 {
-            color: var(--uc-red);
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .warning-callout p {
-            color: var(--text-dark);
-            font-size: 14px;
-        }
-
-        /* Channel Insights */
-        .channel-bar {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            gap: 16px;
-        }
-
-        .channel-label {
-            width: 140px;
-            font-weight: 600;
-            color: var(--text-black);
-            font-size: 14px;
-        }
-
-        .channel-bar-bg {
-            flex: 1;
-            height: 32px;
-            background-color: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
-
-        .channel-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--uc-blue-mid) 0%, var(--uc-blue-dark) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 700;
-            font-size: 12px;
-            padding: 0 12px;
-            white-space: nowrap;
-        }
-
-        .channel-stats {
-            width: 100px;
-            text-align: right;
-        }
-
-        .channel-stats .count {
-            font-weight: 700;
-            color: var(--text-black);
-            font-size: 14px;
-        }
-
-        .channel-stats .pct {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* Implications List */
-        .implications-list {
-            background-color: var(--surface);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 24px;
-        }
-
-        .implications-list h4 {
-            font-weight: 700;
-            color: var(--text-black);
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-
-        .implications-list ul {
-            list-style: none;
-        }
-
-        .implications-list li {
-            padding: 8px 0;
-            font-size: 14px;
-            color: var(--text-dark);
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .implications-list li:before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: var(--uc-orange);
-            font-weight: 700;
-        }
-
-        /* Opportunities Grid */
-        .opportunities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 32px;
-        }
-
-        .opp-card {
-            background-color: var(--white);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-top: 4px solid var(--uc-orange);
-        }
-
-        .opp-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .opp-star {
-            font-size: 20px;
-        }
-
-        .opp-title {
-            font-weight: 700;
-            color: var(--text-black);
-            font-size: 15px;
-            line-height: 1.4;
-        }
-
-        .opp-status {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-unresolved {
-            background-color: #FFEBEE;
-            color: var(--uc-red);
-        }
-
-        .status-pending {
-            background-color: #FFF8E1;
-            color: #F57C00;
-        }
-
-        .opp-metrics {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-muted);
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-        }
-
-        .metric {
-            text-align: center;
-        }
-
-        .metric-label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .metric-value {
-            color: var(--text-dark);
-            font-weight: 700;
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 36px;
-            }
-
-            .header p {
-                font-size: 16px;
-            }
-
-            .findings-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .opportunities-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cluster-header {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .table-container {
-                font-size: 12px;
-            }
-
-            th, td {
-                padding: 10px 8px;
-            }
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .header { background: linear-gradient(135deg, #216BA5 0%, #32BE3F 100%); border-radius: 16px; padding: 48px 40px; color: var(--white); margin-bottom: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+        .header h1 { font-size: 44px; font-weight: 800; margin-bottom: 10px; line-height: 1.15; }
+        .header p { font-size: 17px; font-weight: 400; opacity: 0.95; max-width: 900px; }
+        .source-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.18); color: var(--white); padding: 8px 14px; border-radius: 50px; font-size: 13px; font-weight: 600; margin-top: 14px; border: 1px solid rgba(255,255,255,0.35); }
+
+        .card { background: var(--white); border-radius: 16px; padding: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .card h2 { font-size: 26px; color: var(--uc-navy); font-weight: 800; margin-bottom: 8px; }
+        .card h3 { font-size: 19px; color: var(--uc-blue-dark); font-weight: 700; margin: 22px 0 10px; }
+        .card h4 { font-size: 16px; color: var(--text-dark); font-weight: 700; margin: 14px 0 6px; }
+        .card p { color: var(--text-dark); font-size: 15px; margin-bottom: 10px; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; font-style: italic; }
+
+        .headline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .headline { background: linear-gradient(160deg, #fff 0%, #f8fbff 100%); border: 1px solid #e3edf8; border-left: 6px solid var(--uc-green); border-radius: 12px; padding: 18px 20px; }
+        .headline.orange { border-left-color: var(--uc-orange); }
+        .headline.red { border-left-color: var(--uc-red); }
+        .headline.navy { border-left-color: var(--uc-navy); }
+        .headline .kval { font-size: 30px; font-weight: 800; color: var(--uc-navy); line-height: 1; margin-bottom: 6px; }
+        .headline .klab { font-size: 13px; font-weight: 700; color: var(--text-med); letter-spacing: 0.3px; }
+        .headline .ksub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0 8px; font-size: 14px; }
+        th { background: var(--uc-navy); color: var(--white); padding: 12px 14px; text-align: left; font-weight: 700; }
+        td { padding: 12px 14px; border-bottom: 1px solid #e6e6e6; vertical-align: top; color: var(--text-dark); }
+        tr:hover td { background: #fafbfd; }
+        td strong { color: var(--uc-navy); }
+
+        .quote { border-radius: 10px; padding: 16px 18px; margin: 10px 0; border-left: 5px solid #ccc; background: #f8f9fb; }
+        .quote.pos { border-left-color: var(--uc-green); background: #f3faf3; }
+        .quote.neg { border-left-color: var(--uc-red); background: #fdf3f3; }
+        .quote.mix { border-left-color: var(--uc-gold); background: #fffaec; }
+        .quote .meta { font-size: 12px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--text-med); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .quote .tag { padding: 2px 8px; border-radius: 50px; background: rgba(0,0,0,0.06); font-size: 11px; }
+        .quote.pos .tag.sent { background: var(--uc-green); color: #fff; }
+        .quote.neg .tag.sent { background: var(--uc-red); color: #fff; }
+        .quote.mix .tag.sent { background: #d49400; color: #fff; }
+        .quote p { font-size: 14.5px; color: var(--text-dark); font-style: italic; margin: 0; }
+
+        .obs { background: #f8fbff; border: 1px solid #e3edf8; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+        .obs h4 { color: var(--uc-navy); font-size: 16px; margin: 0 0 6px; }
+
+        .rank-list { counter-reset: rank; list-style: none; padding: 0; margin: 10px 0; }
+        .rank-list li { counter-increment: rank; position: relative; padding: 14px 16px 14px 54px; background: #f8fbff; border: 1px solid #e3edf8; border-radius: 10px; margin-bottom: 10px; color: var(--text-dark); font-size: 15px; }
+        .rank-list li::before { content: counter(rank); position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; background: var(--uc-orange); color: var(--white); font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .rank-list li strong { color: var(--uc-navy); }
+
+        .sources a { color: var(--uc-blue-mid); text-decoration: none; word-break: break-all; }
+        .sources a:hover { text-decoration: underline; }
+
+        .disclaimer { background: #fff7ec; border: 1px solid #f4d79c; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: var(--text-med); margin-top: 18px; }
+
+        @media (max-width: 720px) { .header { padding: 32px 24px; } .header h1 { font-size: 32px; } .card { padding: 22px; } }
     </style>
 </head>
 <body>
-    <div class="uc-nav-widget">
-      <div class="uc-logo-chip">
-        <img src="https://www.ucook.co.za/logos/large.svg" alt="UCOOK" />
-      </div>
-      <a href="index.html" class="back-to-hub">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+<div class="uc-nav-widget">
+    <div class="uc-logo-chip">UCOOK</div>
+    <a class="back-to-hub" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         Back to Hub
-      </a>
+    </a>
+</div>
+
+<div class="container">
+
+    <div class="header">
+        <div class="eyebrow">UX &amp; CX · Public Review Mining</div>
+        <h1>Web Conversation Mining Report</h1>
+        <p>Independent analysis of UCOOK's public review conversations across Trustpilot, HelloPeter, Google Play and the Apple App Store — prepared 7 April 2026.</p>
+        <span class="source-pill">📄 Source: Web Conversation Mining Report.pdf</span>
     </div>
 
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Web Conversation Mining Report</h1>
-            <p>Recent Ticket Analysis · 10,441 Tickets · With Customer Voice · October 2025 – March 2026</p>
-        </div>
-
-        <!-- Headline Findings -->
-        <div class="findings-grid">
-            <div class="finding-card">
-                <h3>43.2%</h3>
-                <p>of contacts are compliments — strong brand affinity and satisfaction signals</p>
+    <!-- HEADLINE KPIs -->
+    <div class="card">
+        <h2>Headline Findings</h2>
+        <p class="subtitle">Research period: 2022–2026 · Researched via live browser automation on 7 April 2026</p>
+        <div class="headline-grid">
+            <div class="headline navy">
+                <div class="kval">77</div>
+                <div class="klab">HelloPeter NPS</div>
+                <div class="ksub">"Very Likely" recommended · TrustIndex 5.7</div>
             </div>
-            <div class="finding-card">
-                <h3>1,228</h3>
-                <p>New high-volume theme: Meal Changes during Billing Window — emerging pain point</p>
+            <div class="headline">
+                <div class="kval">4.46/5</div>
+                <div class="klab">HelloPeter Rating</div>
+                <div class="ksub">41 reviews · last 12 months · 82.9% five-star</div>
             </div>
-            <div class="finding-card">
-                <h3>31.4%</h3>
-                <p>WhatsApp is now a primary channel — on par with email and web</p>
+            <div class="headline orange">
+                <div class="kval">4.1/5</div>
+                <div class="klab">Google Play (App)</div>
+                <div class="ksub">34 reviews · 10K+ downloads · ZA-made</div>
             </div>
-        </div>
-
-        <!-- KPI Grid -->
-        <div class="kpi-grid">
-            <div class="kpi-item">
-                <div class="value">10,441</div>
-                <div class="label">Total Tickets</div>
+            <div class="headline red">
+                <div class="kval">3.8/5</div>
+                <div class="klab">Trustpilot</div>
+                <div class="ksub">5 reviews · 60% five-star / 40% one-star (polarised)</div>
             </div>
-            <div class="kpi-item">
-                <div class="value">~1,874</div>
-                <div class="label">Avg Monthly (Oct 25 – Mar 26)</div>
+            <div class="headline">
+                <div class="kval">12 : 7 : 3</div>
+                <div class="klab">Positive : Negative : Mixed</div>
+                <div class="ksub">22 verbatim quotes extracted across platforms</div>
             </div>
-            <div class="kpi-item">
-                <div class="value">4,507</div>
-                <div class="label">Compliments (43.2%)</div>
-            </div>
-            <div class="kpi-item">
-                <div class="value">3,370</div>
-                <div class="label">Address & Delivery (Largest)</div>
-            </div>
-            <div class="kpi-item">
-                <div class="value">1,228</div>
-                <div class="label">Meal Changes (New #2)</div>
-            </div>
-            <div class="kpi-item">
-                <div class="value">31.4%</div>
-                <div class="label">WhatsApp Share</div>
-            </div>
-            <div class="kpi-item">
-                <div class="value">12</div>
-                <div class="label">Foreign Object Reports</div>
-            </div>
-        </div>
-
-        <!-- Section 2: Theme Breakdown -->
-        <h2 class="section-title"><span class="section-number">2</span> Theme Breakdown</h2>
-        <div class="card">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Theme</th>
-                            <th>Count</th>
-                            <th>% All</th>
-                            <th>% Support</th>
-                            <th>Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="theme-name">Compliment / Positive Feedback</td>
-                            <td>4,507</td>
-                            <td>43.2%</td>
-                            <td>—</td>
-                            <td><span class="badge badge-up"><span class="trend-arrow">↑</span>New Signal</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Address & Delivery Logistics</td>
-                            <td>3,370</td>
-                            <td>32.3%</td>
-                            <td>56.8%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Subscription Management</td>
-                            <td>1,374</td>
-                            <td>13.2%</td>
-                            <td>23.2%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Meal Changes & Order Mgmt</td>
-                            <td>1,285</td>
-                            <td>12.3%</td>
-                            <td>21.7%</td>
-                            <td><span class="badge badge-up"><span class="trend-arrow">↑↑</span>Elevated</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">SKOON / Skincare</td>
-                            <td>446</td>
-                            <td>4.3%</td>
-                            <td>7.5%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Operations & Fulfilment</td>
-                            <td>490</td>
-                            <td>4.7%</td>
-                            <td>8.3%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Billing & Payment</td>
-                            <td>387</td>
-                            <td>3.7%</td>
-                            <td>6.5%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Technical Issues</td>
-                            <td>384</td>
-                            <td>3.7%</td>
-                            <td>6.5%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Onboarding & Sign-up</td>
-                            <td>332</td>
-                            <td>3.2%</td>
-                            <td>5.6%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Product Quality</td>
-                            <td>169</td>
-                            <td>1.6%</td>
-                            <td>2.8%</td>
-                            <td><span class="badge badge-down"><span class="trend-arrow">⚠️</span>Watch</span></td>
-                        </tr>
-                        <tr>
-                            <td class="theme-name">Notifications & Other</td>
-                            <td>168</td>
-                            <td>1.6%</td>
-                            <td>2.8%</td>
-                            <td><span class="badge badge-same"><span class="trend-arrow">→</span>Stable</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Section 3: Cluster Deep-Dives -->
-        <h2 class="section-title"><span class="section-number">3</span> Cluster Deep-Dives with Customer Voice</h2>
-
-        <!-- 3.1 Address & Delivery -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.1</div>
-                <div class="cluster-info">
-                    <h3>Address & Delivery Logistics</h3>
-                    <p>The largest support pain point with 3,370 tickets (32.3% of all contacts). Customers struggle with address changes, delivery status tracking, and logistics edge cases. This remains the primary operational bottleneck.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Address Change (1,821 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Address & Delivery</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I've moved to a new flat and need to change my delivery address. Can you help me update it in my account?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"My address keeps getting rejected in the system even though it's valid. Can someone manually update it?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"I changed my address last week but the system shows the old one. When will the update go live?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Delivery Status (1,273 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Address & Delivery</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"Where is my delivery? The tracking hasn't updated since yesterday and I'm worried it's lost."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"Can you tell me what time my box will arrive? I need to be home for it."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"My order shows out for delivery but I haven't received it yet. Is it coming today?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Area Enquiry (89 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Address & Delivery</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"Do you deliver to postcodes in the North? I'm relocating and want to know if I can keep my subscription."</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Day/Time Change + Non-delivery + Returns (165 tickets combined)</div>
-                <div class="sub-theme-count">Sub-theme of Address & Delivery</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"Can I change my delivery day? I'm away on Thursdays but could do Fridays instead."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"My box was marked delivered but I never received it. What do I do?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"How do I return my reusable boxes? They're piling up in my kitchen."</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3.2 Subscription Management -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.2</div>
-                <div class="cluster-info">
-                    <h3>Subscription Management</h3>
-                    <p>1,374 tickets (13.2% of all contacts) revolve around subscription lifecycle—cancellations, pauses, and involuntary churn. Involuntary cancellations (642) represent a significant opportunity to retain customers through better pre-cancellation communication.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Involuntary Cancellation (642 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Subscription Management</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"My subscription was cancelled but I didn't ask for that. I love your service, please restore it!"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"Payment failed and my account got cancelled. Can you retry the payment and reactivate me?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Voluntary Cancellation (363 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Subscription Management</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I need to cancel my subscription. I've moved abroad and can't receive deliveries."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"How do I cancel? I want to be careful not to get charged again."</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Pause (369 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Subscription Management</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I'm on holiday for 3 weeks. Can I pause my deliveries and restart when I'm back?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"How long can I pause for? Do I have a time limit?"</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3.3 Meal Changes & Order Management -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.3</div>
-                <div class="cluster-info">
-                    <h3>Meal Changes & Order Management</h3>
-                    <p>1,285 tickets (12.3% of all contacts) with a critical pattern: 1,228 changes happen during the billing window. This is a significant operational stress point and a key support driver. Customers are attempting to make changes right when billing locks menus.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Meal Changes During Billing Window (1,228 tickets) ★ ELEVATED</div>
-                <div class="sub-theme-count">Sub-theme of Meal Changes & Order Management</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I tried to change my meals but the system says 'billing in progress.' When can I swap my choices?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"The menu is locked for billing but I have a dietary restriction for next week. Can I still change it?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"I want to swap this meal but the app is blocking me. Is there a way around this?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"Your billing window is too early in the week. I need time to decide on meals."</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Meal Changes After Billing (57 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Meal Changes & Order Management</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I realize I picked the wrong meal. Can I swap it even though billing has closed?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" style="background-color: #FFF3E0; border-left: 4px solid var(--uc-orange); margin-top: 16px;">
-                <p style="font-size: 14px; color: var(--text-dark);"><strong>Agent Pattern Alert:</strong> Support agents consistently offer ad-hoc manual meal swaps during the billing window, creating unscalable operational load. Recommend: Either extend the pre-billing menu window, implement a grace period post-billing, or develop a queue system for locked-window changes.</p>
-            </div>
-        </div>
-
-        <!-- 3.4 Billing & Payment -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.4</div>
-                <div class="cluster-info">
-                    <h3>Billing & Payment</h3>
-                    <p>387 tickets (3.7% of all contacts) related to billing and payment processing. Most are payment failures (299) which trigger involuntary cancellations downstream.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Payment Failed (299 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Billing & Payment</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"Payment failed on my card. I've tried three times and it keeps declining. My subscription got cancelled!"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"Why was my card declined? Is it your system or my bank? Can you retry?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"I got a failed payment notification but I have money in my account. What's going on?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Refund Query (88 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Billing & Payment</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I cancelled last week. When will my refund come through?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"Can I get a refund for the weeks I didn't receive a box?"</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3.5 Operations & Fulfilment -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.5</div>
-                <div class="cluster-info">
-                    <h3>Operations & Fulfilment</h3>
-                    <p>490 tickets (4.7% of all contacts) reporting packaging and content issues—missing ingredients, damaged meals, and food safety concerns. While volume is low, the impact on customer trust is high.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Missing Ingredient (209 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Operations & Fulfilment</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"The sauce was missing from my meal. I can't complete the recipe!"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"Half my ingredients are missing. What should I do?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Missing Recipe Card (96 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Operations & Fulfilment</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"No recipe card in the box. I don't know how to cook these ingredients."</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Missing Meal (76 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Operations & Fulfilment</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I ordered 4 meals but only got 3. Where's the fourth?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Damaged Portion + Missing Gift (109 tickets combined)</div>
-                <div class="sub-theme-count">Sub-theme of Operations & Fulfilment</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"My meat arrived broken and unusable. Can I get a replacement?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I was supposed to get a gift item with this box but it wasn't there."</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3.6 Product Quality -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.6</div>
-                <div class="cluster-info">
-                    <h3>Product Quality</h3>
-                    <p>169 tickets (1.6% of all contacts) with low but critical counts. Product safety is a trust issue—spoiled food (147) and foreign objects (12) are red flags.</p>
-                </div>
-            </div>
-
-            <div class="warning-callout">
-                <h4>🚨 Food Safety Alert: Foreign Objects (12 Reports)</h4>
-                <p>Twelve tickets reporting foreign objects in meals—hair, plastic, glass, metal fragments. While numerically small, this represents a critical food safety risk. Each report carries legal and reputational consequences. Recommend: immediate investigation, supplier audits, and quality control escalation.</p>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Spoiled Meal (147 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Product Quality</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"The chicken smells off and looks discoloured. I'm not eating this!"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"Opened the box this morning and one meal is already bad. What happened?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"The vegetables are rotting. This isn't fresh at all."</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Foreign Object (12 tickets) ⚠️</div>
-                <div class="sub-theme-count">Sub-theme of Product Quality — CRITICAL</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I found a piece of plastic in my meal. This is a food safety issue!"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"There's a hair in the sauce. I'm very concerned about hygiene."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"Glass fragment in my food. This is dangerous!"</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3.7 Onboarding & Sign-up -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.7</div>
-                <div class="cluster-info">
-                    <h3>Onboarding & Sign-up</h3>
-                    <p>332 tickets (3.2% of all contacts) from new users struggling with account creation and subscription mechanics. Early friction points here affect lifetime value.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Sign-up Help (176 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Onboarding & Sign-up</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I'm trying to create an account but the email verification isn't working."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"The sign-up form keeps crashing. I want to order but can't complete registration!"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">How Subscription Works (156 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Onboarding & Sign-up</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"How does billing work? Do I get charged weekly or monthly?"</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"Can I skip weeks or pause? I'm not sure how flexible this is."</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3.8 Technical Issues -->
-        <div class="cluster-section">
-            <div class="cluster-header">
-                <div class="cluster-number">3.8</div>
-                <div class="cluster-info">
-                    <h3>Technical Issues</h3>
-                    <p>384 tickets (3.7% of all contacts) spanning login problems, app crashes, and checkout bugs. The app layer is a secondary pain point but drives friction.</p>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Login Issues (172 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Technical Issues</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I can't log in. It says 'invalid credentials' but I know my password is correct."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"Password reset email never arrived. How do I recover my account?"</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">App Issues (188 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Technical Issues</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"The app keeps crashing when I try to change my meals. Super frustrating."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-web">WEB</span>
-                        <span class="quote-text">"App won't load. Tried reinstalling but same issue."</span>
-                    </div>
-                    <div class="quote-block">
-                        <span class="channel-badge badge-whatsapp">WHATSAPP</span>
-                        <span class="quote-text">"Using GoNative.io app on Android and it's constantly timing out."</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-theme">
-                <div class="sub-theme-title">Checkout Bug (24 tickets)</div>
-                <div class="sub-theme-count">Sub-theme of Technical Issues</div>
-                <div class="quotes-container">
-                    <div class="quote-block">
-                        <span class="channel-badge badge-email">EMAIL</span>
-                        <span class="quote-text">"I'm ready to buy but checkout keeps erroring. I want to place my order!"</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 4: Channel Insights -->
-        <h2 class="section-title"><span class="section-number">4</span> Channel Insights</h2>
-        <div class="card">
-            <div style="margin-bottom: 32px;">
-                <div class="channel-bar">
-                    <div class="channel-label">Email</div>
-                    <div class="channel-bar-bg">
-                        <div class="channel-bar-fill" style="width: 33.4%; background: linear-gradient(90deg, #043B87 0%, #1D5D90 100%);">33.4%</div>
-                    </div>
-                    <div class="channel-stats">
-                        <div class="count">3,486</div>
-                        <div class="pct">stable</div>
-                    </div>
-                </div>
-
-                <div class="channel-bar">
-                    <div class="channel-label">Web Widget</div>
-                    <div class="channel-bar-bg">
-                        <div class="channel-bar-fill" style="width: 32.4%; background: linear-gradient(90deg, #FF6803 0%, #E87543 100%);">32.4%</div>
-                    </div>
-                    <div class="channel-stats">
-                        <div class="count">3,386</div>
-                        <div class="pct">stable</div>
-                    </div>
-                </div>
-
-                <div class="channel-bar">
-                    <div class="channel-label">WhatsApp ★</div>
-                    <div class="channel-bar-bg">
-                        <div class="channel-bar-fill" style="width: 31.4%; background: linear-gradient(90deg, #32BE3F 0%, #2A9E32 100%);">31.4%</div>
-                    </div>
-                    <div class="channel-stats">
-                        <div class="count">3,274</div>
-                        <div class="pct">↑ NEW PRIMARY</div>
-                    </div>
-                </div>
-
-                <div class="channel-bar">
-                    <div class="channel-label">Instagram DM</div>
-                    <div class="channel-bar-bg">
-                        <div class="channel-bar-fill" style="width: 2.0%; background: linear-gradient(90deg, #DF346D 0%, #C91F5A 100%);">2.0%</div>
-                    </div>
-                    <div class="channel-stats">
-                        <div class="count">213</div>
-                        <div class="pct">growing</div>
-                    </div>
-                </div>
-
-                <div class="channel-bar">
-                    <div class="channel-label">Facebook</div>
-                    <div class="channel-bar-bg">
-                        <div class="channel-bar-fill" style="width: 0.7%; background: linear-gradient(90deg, #1D5D90 0%, #043B87 100%);">0.7%</div>
-                    </div>
-                    <div class="channel-stats">
-                        <div class="count">74</div>
-                        <div class="pct">minimal</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="implications-list">
-                <h4>Implications for WhatsApp as Primary Channel:</h4>
-                <ul>
-                    <li><strong>Staffing & Infrastructure:</strong> WhatsApp now represents ~1/3 of all inbound. Ensure team has capacity and that WhatsApp Business API is robust—rate limits, message queues, and response SLA tracking are critical.</li>
-                    <li><strong>Automation & Chatbot:</strong> WhatsApp is increasingly used for urgent issues (delivery tracking, payment failures, pauses). Implement WhatsApp-native quick-reply buttons and bot escalation workflows to deflect routine queries.</li>
-                    <li><strong>Proactive Notifications:</strong> Leverage WhatsApp for pre-billing window alerts, delivery ETAs, and subscription milestones. Many of the meal-change and delivery-tracking tickets could be solved via WhatsApp notifications before they escalate to support.</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Section 5: Prioritised Opportunities -->
-        <h2 class="section-title"><span class="section-number">5</span> Prioritised Opportunities</h2>
-        <p style="color: var(--text-med); margin-bottom: 24px; font-size: 14px;">★ indicates new or elevated priority. 🔴 Unresolved | 🟡 Pending = status labels. Cards show Impact vs Effort for prioritization.</p>
-
-        <div class="opportunities-grid">
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star">★</span>
-                    <span class="opp-title">Billing Window Meal Lock Friction</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-unresolved">🔴 Unresolved</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">1,228 tickets during billing. Extend pre-billing window or add grace-period swaps.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">HIGH</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star">★</span>
-                    <span class="opp-title">WhatsApp Automation & Proactive Notify</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">31.4% of tickets via WhatsApp. Bot + delivery ETAs + subscription alerts.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">HIGH</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star">🚨</span>
-                    <span class="opp-title">Food Safety: Foreign Objects Audit</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-unresolved">🔴 Unresolved</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">12 reports of hair, plastic, glass. Urgent supplier & QC investigation.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">CRITICAL</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">HIGH</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star">★</span>
-                    <span class="opp-title">Address Change Self-Service Portal</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">1,821 address-change tickets. Streamline with in-app / SMS flow.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">HIGH</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">LOW</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">Payment Failure Recovery Flow</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-unresolved">🔴 Unresolved</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">299 failed payments. Add retry UI + card update + auto-reactivation.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">HIGH</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">Involuntary Cancellation Winback</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">642 involuntary cancels. Pre-cancellation alert + save offer flow.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">HIGH</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">Delivery Status Tracking Widget</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">1,273 delivery status tickets. Real-time tracking + ETA in app.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">GoNative.io App Stability Fixes</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-unresolved">🔴 Unresolved</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">188 app issues. Timeout & crash fixes on Android/iOS.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">Missing Item Escalation SOP</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">381 missing items. Streamline fulfillment audit + credit process.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">LOW</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">Onboarding Sign-up UX Audit</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">332 onboarding tickets. Form validation + email verification fixes.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="opp-card">
-                <div class="opp-header">
-                    <span class="opp-star"></span>
-                    <span class="opp-title">Password Reset & Login Recovery</span>
-                </div>
-                <div class="opp-status">
-                    <span class="status-badge status-pending">🟡 Pending</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-med); margin-bottom: 12px;">172 login issues. Improve email delivery & account recovery UX.</p>
-                <div class="opp-metrics">
-                    <div class="metric">
-                        <span class="metric-label">Impact</span>
-                        <span class="metric-value">MEDIUM</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Effort</span>
-                        <span class="metric-value">LOW</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 13px;">
-            <p><strong>Report Period:</strong> October 2025 – March 2026 | <strong>Total Tickets Analysed:</strong> 10,441 | <strong>Data Source:</strong> Web Conversation Mining</p>
-            <p style="margin-top: 8px;">This report reflects live customer voice captured via email, web widget, WhatsApp, Instagram, and Facebook channels.</p>
         </div>
     </div>
+
+    <!-- 1. METHODOLOGY -->
+    <div class="card">
+        <h2>1. Research Methodology</h2>
+        <p>Research was conducted via live browser automation on 7 April 2026. Platforms searched and visited:</p>
+        <ul style="margin: 10px 0 14px 22px; color: var(--text-dark);">
+            <li><strong>Trustpilot</strong> — all 5 reviews fully extracted.</li>
+            <li><strong>HelloPeter</strong> — overview page (41 reviews in last 12 months) and 11 full-text reviews extracted from page 1.</li>
+            <li><strong>Google Play Store</strong> — UCOOK app (ID <em>io.gonative.android.jaboxo</em>), 4.1/5, 34 reviews, top 3 reviews extracted.</li>
+            <li><strong>Apple App Store</strong> — attempted; page returned an error and is <em>not</em> included in findings.</li>
+        </ul>
+        <p>A prior internal Customer Journey Workshop document (Session 1 Post-Workshop Summary) was also referenced for cross-validation of pain points identified in the public reviews.</p>
+    </div>
+
+    <!-- 2. PLATFORM RATINGS -->
+    <div class="card">
+        <h2>2. Platform Ratings at a Glance</h2>
+        <table>
+            <thead><tr><th>Platform</th><th>Rating</th><th>Volume</th><th>Time Frame</th><th>Notes</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Trustpilot</strong></td><td>3.8 / 5</td><td>5 reviews</td><td>2022–2026</td><td>60% five-star; 40% one-star. Polarised — no middle ratings. Low sample volume.</td></tr>
+                <tr><td><strong>HelloPeter</strong></td><td>4.46 / 5</td><td>41 reviews</td><td>Last 12 months</td><td>82.9% five-star; 4.9% four-star; 12.2% one-star. NPS 77 (Very Likely). TrustIndex 5.7.</td></tr>
+                <tr><td><strong>Google Play (App)</strong></td><td>4.1 / 5</td><td>34 reviews</td><td>All-time</td><td>10K+ downloads. ZA-made. App UX complaints alongside positive service reviews.</td></tr>
+                <tr><td><strong>Apple App Store</strong></td><td>N/A</td><td>N/A</td><td>N/A</td><td>Page unavailable during research. Not included in findings.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. FINDINGS BY PLATFORM -->
+    <div class="card">
+        <h2>3. Findings by Platform</h2>
+
+        <h3>Trustpilot — ucook.co.za</h3>
+        <p class="subtitle">5 reviews (3.8/5 all-time). 3 five-star (60%), 2 one-star (40%). No three- or four-star reviews — an unusually polarised distribution indicating customers either love the service deeply or experience a significant failure. Low absolute volume limits statistical weight but the verbatim quality is high.</p>
+
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">Trustpilot · MB · 5 ★ · July 2025</span></div>
+            <p>"Love the meal inspiration! Great service, easy to follow recipes, and tasty meals — one can't go wrong!"</p>
+        </div>
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">Trustpilot · Tamara Newman · 5 ★ · Feb 2024</span></div>
+            <p>"I ordered UCOOK meal kits weekly subscription for my mum in South Africa recently… the set-up and customer service is second to none… the meal choices are so delicious, it's hard to choose… the ingredients are fresh and high quality and they are quick to make, with excellent instructions and are FUN to prepare… the freebies they have received are a lovely touch, like this week they got a very yummy brownie each for Valentines Day."</p>
+        </div>
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">Trustpilot · Neil De Kock · 5 ★ · Sep 2023</span></div>
+            <p>"UCook has changed our food experience. Absolutely solves the pain point of eating the same meals week after week, food wastage, tiresome grocery shopping and conjuring up tasty and healthy food. Thoroughly impressed and will continue using UCook for the foreseeable future."</p>
+        </div>
+        <div class="quote neg">
+            <div class="meta"><span class="tag sent">✘ Negative</span><span class="tag">Trustpilot · Candace Vermaak · 1 ★ · July 2024</span></div>
+            <p>"I used to order quite regularly but always got poor produce or meat so I stopped. Tried the service again and three weeks in a row I received delivery after 8pm, poor produce and this third week the incorrect meals. I am stopping again and customer service was terrible."</p>
+        </div>
+        <div class="quote neg">
+            <div class="meta"><span class="tag sent">✘ Negative</span><span class="tag">Trustpilot · Hannelore Olivier · 1 ★ · July 2022</span></div>
+            <p>"After 4 years I am cancelling my membership… even the head of your customer services cannot honour a promise… I am just really tired of listening to excuses of 'we don't have drivers' and 'our humble apologies'. This was the last straw. I cannot work with a company that makes empty promises and mess up my dinner plans after they made serious IT and PR errors."</p>
+        </div>
+
+        <h3>HelloPeter — UCook</h3>
+        <p class="subtitle">4.46/5 · TrustIndex 5.7 · 41 reviews (last 12 months) · NPS 77 (Very Likely Recommended) · 82.9% five-star, 4.9% four-star, 12.2% one-star. The volume and recency of this data makes it the most statistically significant signal in this report.</p>
+
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">HelloPeter · Lize O · 5 ★ · Feb 2026</span></div>
+            <p>"I've been using UCOOK for around four years now, and not just on my own account — I've experienced it through friends' accounts too. This isn't a 'tried it once' kind of service for me; it's been part of my life for years, and I still genuinely look forward to every delivery. The flavours are amazing, the meals are interesting, and the convenience is unbeatable."</p>
+        </div>
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">HelloPeter · Frieder R · 5 ★ · Mar 2026</span></div>
+            <p>"I am using Ucook for 2+ years and I never had a dish that I didn't enjoy. I am vegetarian and, given the limited weekly number of dishes (= 4), I frequently pause my subscription (which is easy to do, unlike other subscriptions). The ingredients are always fresh and the cooking instructions are easy to follow. It's not the cheapest way of creating a dish — but it is fun to cook and educational."</p>
+        </div>
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">HelloPeter · Lisa P · 5 ★ · Apr 2026</span></div>
+            <p>"Convenient, fresh veggies and great selection of various dietary requirements. We enjoy UCook as it gives us a variety of meals to choose from and expands our taste. I usually order from the Discovery Vitality selection so I gather Vitality Miles as well as eating healthily."</p>
+        </div>
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">HelloPeter · Brynne C · 5 ★ · Feb 2026</span></div>
+            <p>"I love coming home to an easy dinner meal and Ucook makes that easy! I love the variety of options you get each week and the simplicity of the whole process. By far the greatest invention since sliced bread!"</p>
+        </div>
+        <div class="quote pos">
+            <div class="meta"><span class="tag sent">✔ Positive</span><span class="tag">HelloPeter · Brigitte · 5 ★ · Mar 2026</span></div>
+            <p>"Love the quality of the ingredients. Always nicely packed and stays fresh. Now my husband enjoys cooking. He likes to cook when it is with Ucook."</p>
+        </div>
+        <div class="quote neg">
+            <div class="meta"><span class="tag sent">✘ Negative</span><span class="tag">HelloPeter · Mishka Van Der Merwe · 1 ★ · Apr 2026</span></div>
+            <p>"Despite urgent attempts, I have been unable to reach their support team via phone, email, or WhatsApp. My order was placed in error today, and over R1000 was taken — money I desperately needed for rent. I expect a prompt response and resolution, as their channels of support have utterly failed me."</p>
+        </div>
+        <div class="quote neg">
+            <div class="meta"><span class="tag sent">✘ Negative</span><span class="tag">HelloPeter · Mallory · 1 ★ · Feb 2026</span></div>
+            <p>"Been sitting late evening waiting for food to arrive. Can't contact the driver and can't contact the help center (before 5). 1 star for service and help centre performance — needs to actually be contactable."</p>
+        </div>
+        <div class="quote neg">
+            <div class="meta"><span class="tag sent">✘ Negative</span><span class="tag">HelloPeter · Sanet R · 1 ★ · Feb 2026</span></div>
+            <p>"Order (non) delivery — facts when asked about the delivery of the order are inaccurate without proper information. On 29 January placed an order; upon placing the order the message said it will be dispatched on Monday 2 February. I logged a ticket on 3 February as I have not received my order. On 4 February I had a missed call from Ucook Support. Unhappy customer."</p>
+        </div>
+
+        <h3>Google Play Store — UCOOK App</h3>
+        <p class="subtitle">4.1/5 overall (34 reviews, 10K+ downloads, ZA-made by Silvertree Brands). App reviews reveal a split between users who love the underlying service and those frustrated by technical instability and UX design choices.</p>
+
+        <div class="quote neg">
+            <div class="meta"><span class="tag sent">✘ Negative</span><span class="tag">Google Play · Natascha Bourreau · 1 ★ · Dec 2025</span></div>
+            <p>"I can't complain about the app itself. However, UCOOK service is appalling. Through the app I have complained about quality of ingredients and never got a response. They have delivery instructions which I state that the delivery address is a company and needs to be delivered before we close — and the items get delivered after that time more often than not."</p>
+        </div>
+        <div class="quote mix">
+            <div class="meta"><span class="tag sent">◆ Mixed</span><span class="tag">Google Play · Amy Barker · Nov 2024</span></div>
+            <p>"Love the service, we've been using it for nearly a year. But the app has been buggy for about 2 weeks now. There's a 502 error message every time I open it and on basically every page. It's extremely frustrating — please can you sort this out ASAP as it is affecting the experience of the service as a whole."</p>
+        </div>
+        <div class="quote mix">
+            <div class="meta"><span class="tag sent">◆ Mixed</span><span class="tag">Google Play · Chris Metcalfe · Aug 2023</span></div>
+            <p>"Reactivating my Ucook account after a few years. My past experience is the only thing that's getting me through the online process. It's like the designers have never used an Android app before. So clunky and weird. Lucky for them the mobile web is so broken else I would uninstall this thing."</p>
+        </div>
+    </div>
+
+    <!-- 4. SENTIMENT SUMMARY -->
+    <div class="card">
+        <h2>4. Sentiment Summary</h2>
+        <table>
+            <thead><tr><th>Sentiment</th><th style="width:70px;">Count</th><th>Key Themes</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><strong style="color:var(--uc-green);">Positive</strong></td>
+                    <td>12</td>
+                    <td>Recipe variety and chef-crafted quality; fresh, high-quality seasonal ingredients; easy-to-follow cooking instructions; convenience (eliminates food wastage and grocery shopping); flexible subscription pausing; Discovery Vitality integration; personalised touches and freebies; long-term loyalty (multiple 2–4 year subscribers).</td>
+                </tr>
+                <tr>
+                    <td><strong style="color:var(--uc-red);">Negative</strong></td>
+                    <td>7</td>
+                    <td>Late-evening deliveries (after 8pm, after business closing times); inconsistent produce/meat quality; incorrect meals delivered; customer support unreachable via phone, email, and WhatsApp; help centre closes at 5pm; inability to contact drivers; non-delivery with inaccurate tracking; no refund resolution for erroneously charged orders.</td>
+                </tr>
+                <tr>
+                    <td><strong style="color:#B78100;">Neutral / Mixed</strong></td>
+                    <td>3</td>
+                    <td>Good core service undermined by app instability (502 errors, 2-week outages); Android app UX described as clunky; in-app complaint submissions ignored; delivery window instructions not followed.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 5. KEY OBSERVATIONS -->
+    <div class="card">
+        <h2>5. Key Observations</h2>
+
+        <div class="obs"><h4>1 · The core product is the hero — and it is genuinely loved.</h4>
+            <p>Across every platform, the most consistent praise is directed at the recipes themselves: variety, chef-crafted quality, freshness, and the pleasure of cooking at home without planning. Multiple long-term subscribers (2–4+ years) remain active and enthusiastic, with reviewers explicitly stating UCOOK has "changed" how they cook or eat. This is a powerful product-market fit signal and the brand's most defensible asset. More of this — more recipe variety, more dietary options, more meal personalisation — is a low-risk, high-reward investment.</p>
+        </div>
+
+        <div class="obs"><h4>2 · Customer support inaccessibility is the single biggest CX failure.</h4>
+            <p>The most emotionally charged negative reviews — across Trustpilot, HelloPeter, and Google Play — share one common thread: customers cannot reach UCOOK when something goes wrong. Phone lines go unanswered, emails receive no response, WhatsApp is unresponsive, and the in-app complaint system goes into a black hole. The help centre closing at 5pm is a structural mismatch given that deliveries frequently happen in the evening. This is the highest-priority fix: a responsive, multi-channel support system accessible at least until 8pm, with visible acknowledgement SLAs.</p>
+        </div>
+
+        <div class="obs"><h4>3 · Delivery timing and produce quality are the two operational pressure points.</h4>
+            <p>Late deliveries (post-8pm) and inconsistent produce quality are the most frequently cited reasons for cancellation or downgrading. Candace Vermaak's Trustpilot review is particularly striking: she tried the service, stopped due to poor produce, returned, and experienced the same issues three weeks in a row before cancelling again. This suggests a systemic rather than isolated problem. The gap between the quality of the recipe experience and the quality of last-mile execution creates a trust deficit that erodes subscriber retention over time.</p>
+        </div>
+
+        <div class="obs"><h4>4 · The Discovery Vitality integration is an underutilised loyalty lever.</h4>
+            <p>Lisa P's HelloPeter review specifically highlights Vitality Miles as a driver of her ordering behaviour — she selects UCOOK's Vitality selection specifically to earn Miles while eating healthily. This suggests the integration is delivering real perceived value, but it appears underexplored in how it is marketed or surfaced within the product. Deepening this integration — more visible Vitality Miles tracking in-app, targeted promotions for Vitality members — could meaningfully increase both acquisition and retention among Discovery health members.</p>
+        </div>
+
+        <div class="obs"><h4>5 · The app is technically unstable and the Android UX needs a rethink.</h4>
+            <p>Two distinct app issues emerge from reviews: (1) technical instability — a 502 error that persisted for two weeks and affected "basically every page", indicating a significant production incident with slow resolution; and (2) Android UX design quality — described as "clunky and weird" by a returning user, suggesting the app feels unnatural on Android. Given that the app is the primary ordering interface and the first touchpoint for weekly re-engagement, these issues directly suppress repeat order rates. A UX audit of the Android experience and a robust app monitoring/alerting system would address both.</p>
+        </div>
+
+        <div class="obs"><h4>6 · Long-term subscribers are the brand's strongest advocates — and most at-risk churners.</h4>
+            <p>The most detailed and emotionally rich reviews — both positive and negative — come from subscribers who have used UCOOK for multiple years. Four-year subscribers write both the most glowing endorsements and the most devastating cancellation notices. This cohort represents disproportionate lifetime value and disproportionate referral impact. A formal loyalty or VIP programme — even a simple one — combined with proactive outreach when delivery issues occur, could dramatically reduce the risk of losing these high-value customers to a single bad experience.</p>
+        </div>
+
+        <div class="obs"><h4>7 · The vegetarian menu has a visibility and volume gap.</h4>
+            <p>Frieder R's HelloPeter review explicitly notes that as a vegetarian, the limited weekly selection (just 4 dishes) means they frequently pause their subscription. This is a usage friction point specific to the vegetarian/plant-based segment — a fast-growing dietary cohort in South Africa. Expanding vegetarian and plant-based recipe options, or providing a "vegetarian-first" filter or plan, could reduce pause frequency and improve retention for this segment.</p>
+        </div>
+    </div>
+
+    <!-- 6. CONCLUSION -->
+    <div class="card">
+        <h2>6. Conclusion</h2>
+        <p>UCOOK has built a genuinely beloved product: the meals, recipes, and cooking experience consistently generate strong emotional loyalty, evidenced by multiple 2–4 year subscribers who remain enthusiastic advocates. The HelloPeter NPS of 77 and 82.9% five-star rate (last 12 months) confirm the service is performing well in aggregate.</p>
+        <p>However, the brand's biggest vulnerability is the gap between what it promises — fresh, convenient, chef-quality meals delivered to your door — and what happens when that promise fails: deliveries arrive late at night, produce is substandard, and there is nobody to call.</p>
+        <h3 style="margin-top:14px;">Prioritised improvement areas</h3>
+        <ol class="rank-list">
+            <li><strong>Customer support accessibility and after-hours coverage.</strong> Multi-channel support open until at least 8pm; visible acknowledgement SLAs.</li>
+            <li><strong>Delivery time window adherence and produce quality consistency.</strong> Close the gap between the recipe experience and last-mile execution.</li>
+            <li><strong>App stability and Android UX quality.</strong> Fix the 502-error class of incidents and revisit the Android design for fit and feel.</li>
+            <li><strong>Long-term subscriber retention and loyalty recognition.</strong> A formal VIP / loyalty programme and proactive outreach on delivery failures.</li>
+        </ol>
+        <p>Addressing these operational gaps while continuing to invest in the product strengths — recipe variety, ingredient quality, Discovery Vitality integration — would position UCOOK to convert its highly loyal subscriber base into an even more powerful referral engine.</p>
+    </div>
+
+    <!-- 7. SOURCES -->
+    <div class="card sources">
+        <h2>7. Sources</h2>
+        <ol style="margin-left: 22px; color: var(--text-dark); font-size: 14px; line-height: 1.9;">
+            <li>Trustpilot — UCOOK Reviews (ucook.co.za) · <a href="https://www.trustpilot.com/review/ucook.co.za" target="_blank" rel="noopener">trustpilot.com/review/ucook.co.za</a></li>
+            <li>HelloPeter — UCook Overview (last 12 months, 41 reviews) · <a href="https://www.hellopeter.com/ucook" target="_blank" rel="noopener">hellopeter.com/ucook</a></li>
+            <li>Google Play Store — UCOOK App (io.gonative.android.jaboxo) · <a href="https://play.google.com/store/apps/details?id=io.gonative.android.jaboxo&hl=en_ZA" target="_blank" rel="noopener">play.google.com/store/apps/details?id=io.gonative.android.jaboxo</a></li>
+            <li>Internal Reference — CJ Post-Workshop Summary Session 1 (UCOOK Customer Journey) · Silvertree Brands internal document</li>
+        </ol>
+        <div class="disclaimer">This report is based on publicly available online conversations mined on 7 April 2026. It does not constitute a statistically representative survey. Findings reflect the volume and nature of indexed public discourse at the time of research. Prepared for Silvertree Brands (Pty) Ltd.</div>
+    </div>
+
+</div>
 </body>
 </html>
